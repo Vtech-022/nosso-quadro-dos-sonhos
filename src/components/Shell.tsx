@@ -119,7 +119,7 @@ export function Shell() {
   const sideContent = (mobile: boolean) => (
     <>
       <NavLink to="/quadro" onClick={() => setDrawer(false)} className="flex items-center gap-3 px-1 pb-5 pt-1" aria-label="Dreamspace, início">
-        <LogoMark size={40} />
+        <LogoMark size={44} />
         <span className="side-label leading-none">
           <span className="block font-display text-[18.5px] font-bold tracking-[-0.03em]">Dreamspace</span>
           <span className="mt-1 block text-[11.5px] font-medium text-tinta-3">Espaço dos sonhos</span>

@@ -8,7 +8,7 @@ import { useBoard } from '../state/board'
 
 /* ---------------- Marca ---------------- */
 export function LogoMark({ size = 34 }: { size?: number }) {
-  return <img src={`${import.meta.env.BASE_URL}logo.png`} width={size} height={size} alt="" className="shrink-0 select-none" style={{ width: size, height: size, borderRadius: size * 0.24 }} draggable={false} />
+  return <img src={`${import.meta.env.BASE_URL}logo.png`} width={size} height={size} alt="" className="shrink-0 select-none object-contain" style={{ width: size, height: size }} draggable={false} />
 }
 
 export function Logo({ compact = false, light = false }: { compact?: boolean; light?: boolean }) {
