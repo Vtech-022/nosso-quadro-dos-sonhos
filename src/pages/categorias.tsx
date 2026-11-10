@@ -24,7 +24,7 @@ function CategoryDialog({ open, cat, onClose }: { open: boolean; cat?: Category;
         catch (er) { setError((er as Error).message) } finally { setBusy(false) }
       }}>
         <div className="flex items-start justify-between gap-4">
-          <h2 className="text-[34px] leading-none">{cat ? 'Editar categoria' : 'Nova categoria'}</h2>
+          <h2 className="text-[24px] leading-none">{cat ? 'Editar categoria' : 'Nova categoria'}</h2>
           <CloseButton onClick={onClose} />
         </div>
         <div className="mt-6 space-y-5">
@@ -87,7 +87,7 @@ export function CategoriasPage() {
                 <button className="flex min-w-0 flex-1 items-center gap-4 text-left sm:gap-5" aria-expanded={open} onClick={() => setSelected(open ? null : r.id)}>
                   <span className={`tone-chip tone-${r.tone} grid h-12 w-12 shrink-0 place-items-center rounded-full`}><CategoryIcon name={r.icon} size={22} /></span>
                   <span className="min-w-0">
-                    <span className="block truncate font-display text-[27px] leading-none sm:text-[34px]">{r.name}</span>
+                    <span className="block truncate font-display text-[21px] leading-none sm:text-[26px]">{r.name}</span>
                     <span className="mt-1.5 block text-[13.5px] text-tinta-2">
                       {r.dreams.length === 0 ? 'Nenhum sonho ainda' : (() => { const a = r.dreams.filter((d) => d.status === 'achieved').length; return `${r.dreams.length} ${r.dreams.length === 1 ? 'sonho' : 'sonhos'}, ${a} ${a === 1 ? 'conquistado' : 'conquistados'}` })()}
                       {value > 0 && <> · {moneyCompact(value)} em estimativas</>}

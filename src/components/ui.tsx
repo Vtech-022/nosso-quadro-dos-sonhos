@@ -10,9 +10,9 @@ import { useBoard } from '../state/board'
 export function LogoMark({ size = 34 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
-      <rect width="64" height="64" rx="15" fill="#2E4A41" />
-      <g transform="rotate(-7 28 28)"><rect x="11" y="11" width="31" height="35" rx="2" fill="#FBFAF7" /><rect x="15" y="15" width="23" height="21" fill="#B08A3E" /></g>
-      <g transform="rotate(8 42 40)"><rect x="29" y="26" width="25" height="27" rx="2" fill="#EEEBE4" /><rect x="32" y="29" width="19" height="16" fill="#B5766C" /></g>
+      <rect x="6" y="10" width="34" height="42" rx="5" fill="#2E5BD0" transform="rotate(-8 23 31)" />
+      <rect x="22" y="14" width="34" height="42" rx="5" fill="#F4B400" transform="rotate(6 39 35)" />
+      <rect x="28" y="22" width="22" height="22" rx="3" fill="#fff" opacity=".85" transform="rotate(6 39 35)" />
     </svg>
   )
 }
@@ -22,7 +22,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
     <div className="flex items-center gap-3">
       <LogoMark />
       {!compact && (
-        <div className="font-display text-[21px] leading-[1.02] text-tinta">
+        <div className="font-display text-[17px] font-semibold leading-[1.05] text-tinta">
           Nosso Quadro<br />dos Sonhos
         </div>
       )}
@@ -91,6 +91,9 @@ export function Modal({ open, onClose, children, label, size = 'md', dismissable
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const returnTo = useRef<HTMLElement | null>(null)
+  // onClose costuma ser uma função nova a cada render; guardar em ref evita reiniciar o foco a cada tecla
+  const closeRef = useRef(onClose)
+  closeRef.current = onClose
 
   useEffect(() => {
     if (!open) return
@@ -102,7 +105,7 @@ export function Modal({ open, onClose, children, label, size = 'md', dismissable
       el?.focus({ preventScroll: true })
     }, 30)
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && dismissable) { e.stopPropagation(); onClose() }
+      if (e.key === 'Escape' && dismissable) { e.stopPropagation(); closeRef.current() }
       if (e.key === 'Tab' && ref.current) {
         const f = [...ref.current.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])')]
           .filter((x) => x.offsetParent !== null)
@@ -119,20 +122,20 @@ export function Modal({ open, onClose, children, label, size = 'md', dismissable
       document.body.style.overflow = prevOverflow
       returnTo.current?.focus?.({ preventScroll: true })
     }
-  }, [open, onClose, dismissable])
+  }, [open, dismissable])
 
   if (!open) return null
   const width = { sm: 'sm:max-w-[420px]', md: 'sm:max-w-[560px]', lg: 'sm:max-w-[920px]', xl: 'sm:max-w-[1120px]' }[size]
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-6">
-      <div className="absolute inset-0 bg-tinta/50" onClick={dismissable ? onClose : undefined} aria-hidden="true" />
+      <div className="absolute inset-0 bg-black/50" onClick={dismissable ? onClose : undefined} aria-hidden="true" />
       <div
         ref={ref}
         role="dialog"
         aria-modal="true"
         aria-label={label}
         tabIndex={-1}
-        className={`relative w-full ${width} max-h-[94dvh] overflow-y-auto overscroll-contain bg-papel rounded-t-[26px] sm:rounded-[22px] shadow-erguido animate-entrar focus:outline-none`}
+        className={`relative w-full ${width} max-h-[94dvh] overflow-y-auto overscroll-contain bg-papel rounded-t-[10px] sm:rounded-[12px] shadow-erguido animate-entrar focus:outline-none`}
       >
         {children}
       </div>
@@ -179,22 +182,48 @@ export function ConfirmDialog({ open, title, text, confirmLabel, danger, onConfi
 }
 
 /* ---------------- Campos ---------------- */
+const brl = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+/**
+ * Campo de valor em reais. Enquanto você digita, o texto fica livre (ex.: 450000 ou 1250,50);
+ * ao sair do campo ele é formatado como R$ 450.000,00. Ponto é ignorado, vírgula separa os centavos.
+ */
 export function MoneyInput({ value, onChange, ...rest }: {
   value: number | null; onChange: (v: number | null) => void
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'>) {
-  const fmt = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const [text, setText] = useState<string | null>(null) // null = não está editando
+  const shown = text ?? (value == null ? '' : `R$ ${brl.format(value)}`)
+
+  const parse = (raw: string): number | null => {
+    const clean = raw.replace(/[^\d,]/g, '')
+    const [int = '', ...dec] = clean.split(',')
+    if (!int && !dec.length) return null
+    const n = Number(`${int.slice(0, 12) || '0'}.${(dec.join('')).slice(0, 2) || '0'}`)
+    return Number.isFinite(n) ? n : null
+  }
+
   return (
     <input
       {...rest}
       className="field tabular-nums"
-      inputMode="numeric"
+      inputMode="decimal"
       autoComplete="off"
       placeholder="R$ 0,00"
-      value={value == null ? '' : `R$ ${fmt.format(value)}`}
-      onChange={(e) => {
-        const digits = e.target.value.replace(/\D/g, '').slice(0, 12)
-        onChange(digits ? Number(digits) / 100 : null)
+      value={shown}
+      onFocus={(e) => {
+        const raw = value == null ? '' : String(value).replace('.', ',')
+        setText(raw)
+        const el = e.target
+        requestAnimationFrame(() => el.select())
       }}
+      onChange={(e) => {
+        const raw = e.target.value.replace(/[^\d,.]/g, '').replace(/\./g, '')
+        const first = raw.indexOf(',')
+        const t = first === -1 ? raw : raw.slice(0, first + 1) + raw.slice(first + 1).replace(/,/g, '').slice(0, 2)
+        setText(t)
+        onChange(parse(t))
+      }}
+      onBlur={() => setText(null)}
     />
   )
 }
@@ -212,7 +241,7 @@ export function Field({ label, hint, children, htmlFor }: { label: string; hint?
 export function ErrorNote({ children }: { children?: ReactNode }) {
   if (!children) return null
   return (
-    <p role="alert" className="rounded-[10px] bg-[#fbeeea] border border-[#ecd0c8] text-alerta text-[14px] px-3.5 py-2.5 leading-snug">
+    <p role="alert" className="rounded-[3px] bg-rosa-soft border border-alerta/30 text-alerta text-[14px] px-3.5 py-2.5 leading-snug">
       {children}
     </p>
   )
@@ -226,14 +255,12 @@ export function Seal({ year, size = 72, className = '', style }: {
   return (
     <svg className={`seal ${className}`} style={style} width={size} height={size} viewBox="0 0 100 100" role="img" aria-label={`Sonho conquistado em ${year}`}>
       <defs><path id={`c${id}`} d="M50,50 m-33,0 a33,33 0 1,1 66,0 a33,33 0 1,1 -66,0" /></defs>
-      <circle cx="50" cy="50" r="47" fill="#B08A3E" />
-      <circle cx="50" cy="50" r="47" fill="none" stroke="#8F6E2B" strokeWidth="1.5" strokeDasharray="2.4 2.4" />
-      <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.55)" strokeWidth="1.2" />
-      <circle cx="50" cy="50" r="25" fill="none" stroke="rgba(255,255,255,.4)" strokeWidth="1" />
-      <text fill="#FBF3DC" fontSize="8.6" fontWeight="700" style={{ fontFamily: '"Hanken Grotesk Variable", sans-serif' }}>
+      <circle cx="50" cy="50" r="47" fill="#F4B400" />
+      <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(20,26,44,.35)" strokeWidth="1" strokeDasharray="1.5 3" />
+      <text fill="#141A2C" fontSize="8" fontWeight="700" style={{ fontFamily: '"Albert Sans Variable", sans-serif' }}>
         <textPath href={`#c${id}`} startOffset="0" textLength="196" lengthAdjust="spacing">CONQUISTADO NO NOSSO QUADRO</textPath>
       </text>
-      <text x="50" y="57" textAnchor="middle" fill="#FFF8E4" fontSize="21" style={{ fontFamily: '"Instrument Serif", serif' }}>{year}</text>
+      <text x="50" y="58" textAnchor="middle" fill="#141A2C" fontSize="22" fontWeight="800" style={{ fontFamily: '"Albert Sans Variable", sans-serif' }}>{year}</text>
     </svg>
   )
 }

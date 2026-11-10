@@ -64,7 +64,7 @@ export function DreamDetail({ dreamId, onClose }: { dreamId: string | null; onCl
           <div className="relative bg-linho/70 p-4 sm:p-6 md:flex md:flex-col md:justify-center md:rounded-l-[22px]">
             <div className="relative overflow-hidden rounded-[6px] bg-linho shadow-papel">
               {src ? (
-                <img src={src} alt={dream.title} className="mx-auto max-h-[62dvh] w-full object-contain bg-white" />
+                <img src={src} alt={dream.title} className="mx-auto max-h-[62dvh] w-full object-contain bg-papel" />
               ) : (
                 <div className={`print-empty tone-${cat?.tone ?? 6} aspect-[4/3]`}><CategoryIcon name={cat?.icon ?? 'star'} size={72} /></div>
               )}
@@ -109,7 +109,7 @@ export function DreamDetail({ dreamId, onClose }: { dreamId: string | null; onCl
               <CloseButton onClick={onClose} className="-mr-2 -mt-1" />
             </div>
 
-            <h2 className="mt-4 text-[38px] sm:text-[46px] leading-[1]">{dream.title}</h2>
+            <h2 className="mt-4 text-[26px] sm:text-[34px] leading-[1]">{dream.title}</h2>
             {dream.description && <p className="mt-4 whitespace-pre-line text-[16px] leading-relaxed text-tinta-2">{dream.description}</p>}
 
             {dream.target_date && !achieved && (
@@ -118,7 +118,7 @@ export function DreamDetail({ dreamId, onClose }: { dreamId: string | null; onCl
 
             {/* Valores */}
             {dream.estimated_value != null && (
-              <div className="mt-6 rounded-[14px] border border-linho bg-white/70 p-4 sm:p-5">
+              <div className="mt-6 rounded-[3px] border border-linho bg-papel/70 p-4 sm:p-5">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2 text-[13px] font-semibold text-tinta-2"><Wallet size={16} className="text-pinheiro" /> Valores</span>
                   {!achieved && !editSaved && <button className="text-[13px] font-semibold text-pinheiro hover:underline" onClick={() => { setSavedValue(dream.saved_value); setEditSaved(true) }}>Atualizar acumulado</button>}
@@ -146,10 +146,10 @@ export function DreamDetail({ dreamId, onClose }: { dreamId: string | null; onCl
 
             {/* Conquista */}
             {achieved && (
-              <div className="mt-6 rounded-[14px] bg-latao-soft/60 p-4 sm:p-5">
+              <div className="mt-6 rounded-[3px] bg-latao-soft/60 p-4 sm:p-5">
                 <p className="text-[13px] font-semibold text-latao-2">Conquistado em {dream.achieved_at ? formatDate(dream.achieved_at) : ''}</p>
                 <p className="mt-1 text-[14.5px] text-tinta-2">Registrado por {dream.achieved_by === b.meId ? 'você' : b.nameOf(dream.achieved_by)}</p>
-                {dream.achievement_note && <p className="mt-3 border-l-2 border-latao pl-3 font-display text-[22px] italic leading-snug">“{dream.achievement_note}”</p>}
+                {dream.achievement_note && <p className="mt-3 border-l-2 border-latao pl-3 text-[18px] italic leading-snug">“{dream.achievement_note}”</p>}
               </div>
             )}
 
@@ -159,7 +159,7 @@ export function DreamDetail({ dreamId, onClose }: { dreamId: string | null; onCl
                 ? <button className="btn btn-brass" onClick={() => setAchieving(true)}><Sparkles size={17} /> Marcar como conquistado</button>
                 : <button className="btn btn-soft" disabled={busy === 'reopen'} onClick={() => run('reopen', () => b.reopen(dream), 'Sonho voltou para o planejamento.')}>{busy === 'reopen' ? <Spinner /> : <RotateCcw size={16} />} Voltar ao planejamento</button>}
               <button className="btn btn-soft" onClick={() => setEditing(true)}><Pencil size={16} /> Editar</button>
-              <button className="btn btn-ghost text-alerta hover:bg-[#fbeeea]" onClick={() => setDeleting(true)}><Trash2 size={16} /> Excluir</button>
+              <button className="btn btn-ghost text-alerta hover:bg-rosa-soft" onClick={() => setDeleting(true)}><Trash2 size={16} /> Excluir</button>
             </div>
 
             <p className="mt-5 flex flex-wrap items-center gap-2 text-[13px] text-tinta-3">

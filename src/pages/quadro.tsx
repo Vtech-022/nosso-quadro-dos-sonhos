@@ -27,7 +27,7 @@ export function PageHead({ title, sub, right }: { title: string; sub?: string; r
 function Stat({ n, label }: { n: number; label: string }) {
   return (
     <div>
-      <div className="font-display text-[56px] leading-[.85] tabular-nums sm:text-[72px]">{n}</div>
+      <div className="font-display text-[30px] leading-[.9] tabular-nums sm:text-[36px]">{n}</div>
       <div className="mt-2 text-[13.5px] text-tinta-2">{label}</div>
     </div>
   )
@@ -57,10 +57,10 @@ export function QuadroPage() {
     <>
       <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
         <div>
-          <h1 className="font-display text-[clamp(3.3rem,9.4vw,8.6rem)] leading-[.86] tracking-[-0.028em]">
+          <h1 className="text-[clamp(2rem,4.2vw,3.1rem)] leading-[1.05] tracking-[-0.025em]">
             Nosso Quadro<br />dos Sonhos
           </h1>
-          <p className="mt-6 max-w-[620px] font-display text-[clamp(1.35rem,2.3vw,1.95rem)] italic leading-[1.15] text-tinta-2">{motto}</p>
+          <p className="mt-6 max-w-[620px] text-[clamp(1.05rem,1.6vw,1.3rem)] leading-snug text-tinta-2">{motto}</p>
         </div>
         <div className="flex items-end gap-10 pb-1">
           <Stat n={planning} label="em planejamento" />
@@ -69,7 +69,7 @@ export function QuadroPage() {
       </section>
 
       {alone && (
-        <div className="mt-9 flex flex-col gap-3 rounded-[14px] border-[1.5px] border-dashed border-[#bdb6a6] bg-papel/50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-9 flex flex-col gap-3 rounded-[12px] border border-dashed border-linho bg-papel px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[15px] leading-snug text-tinta-2">
             {invited ? <>O convite está enviado. Assim que sua parceria aceitar, o quadro passa a ser dos dois.</> : <>Este quadro ainda é só seu. Convide seu par para pendurar e conquistar os sonhos juntos.</>}
           </p>
@@ -118,7 +118,7 @@ export function QuadroPage() {
           />
         ) : visible.length === 0 ? (
           <div className="py-16 text-center">
-            <h2 className="text-[34px] leading-none">Nenhum sonho com esses filtros.</h2>
+            <h2 className="text-[24px] leading-none">Nenhum sonho com esses filtros.</h2>
             <button className="btn btn-soft mt-6" onClick={() => { setStatus('all'); setCat(null) }}>Limpar filtros</button>
           </div>
         ) : (
@@ -164,7 +164,7 @@ export function PlanejamentoPage() {
           {groups.map(([year, list]) => (
             <section key={year} aria-label={year === 'sem-data' ? 'Sem data definida' : year}>
               <div className="mb-5 flex items-baseline gap-4 border-b border-linho pb-3">
-                <h2 className="font-display text-[44px] leading-none sm:text-[56px]">{year === 'sem-data' ? 'Sem data definida' : year}</h2>
+                <h2 className="font-display text-[22px] leading-none">{year === 'sem-data' ? 'Sem data definida' : year}</h2>
                 <span className="text-[14px] text-tinta-2">{list.length} {list.length === 1 ? 'sonho' : 'sonhos'}</span>
               </div>
               <Mural dreams={list} onOpen={openDetail} />

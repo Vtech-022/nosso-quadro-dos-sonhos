@@ -4,7 +4,7 @@ import { useBoard } from '../state/board'
 import { useToast } from '../state/toast'
 import { CloseButton, ConfirmDialog, ErrorNote, Field, Modal, Spinner } from './ui'
 
-export const inviteLink = (code: string) => `${window.location.origin}/convite/${code}`
+export const inviteLink = (code: string) => `${window.location.origin}${import.meta.env.VITE_DEMO === '1' ? window.location.pathname : ''}${import.meta.env.VITE_DEMO === '1' ? '#' : ''}/convite/${code}`
 
 export function InviteDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const b = useBoard()
@@ -43,7 +43,7 @@ export function InviteDialog({ open, onClose }: { open: boolean; onClose: () => 
       <div className="p-6 sm:p-8">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-[34px] sm:text-[40px] leading-[1.02]">{inv ? 'Convite pronto' : 'Convidar seu par'}</h2>
+            <h2 className="text-[24px] sm:text-[22px] leading-[1.02]">{inv ? 'Convite pronto' : 'Convidar seu par'}</h2>
             <p className="mt-2 text-[15px] text-tinta-2">
               {inv ? 'Envie o link ou o código. Quando a outra pessoa aceitar, vocês passam a ver e editar o mesmo quadro.' : 'A outra pessoa cria a própria conta e entra neste mesmo quadro. Mais ninguém tem acesso.'}
             </p>
@@ -74,9 +74,9 @@ export function InviteDialog({ open, onClose }: { open: boolean; onClose: () => 
               <a className="btn btn-soft" href={`mailto:${inv.invited_email ?? ''}?subject=${encodeURIComponent('Convite para o Nosso Quadro dos Sonhos')}&body=${encodeURIComponent(msg(link))}`}><Mail size={17} /> E-mail</a>
               {canShare && <button className="btn btn-soft" onClick={() => navigator.share({ title: 'Nosso Quadro dos Sonhos', text: msg(link), url: link }).catch(() => {})}><Share2 size={17} /> Compartilhar</button>}
             </div>
-            {fresh && <p className="rounded-[10px] bg-pinheiro-soft px-3.5 py-2.5 text-[14px] text-pinheiro">Convite criado. O envio é feito por você, pelo aplicativo que preferir.</p>}
+            {fresh && <p className="rounded-[3px] bg-pinheiro-soft px-3.5 py-2.5 text-[14px] text-pinheiro">Convite criado. O envio é feito por você, pelo aplicativo que preferir.</p>}
             <div className="flex flex-wrap justify-between gap-2 border-t border-linho pt-5">
-              <button className="btn btn-ghost text-alerta hover:bg-[#fbeeea]" onClick={() => setCancelling(true)}>Cancelar este convite</button>
+              <button className="btn btn-ghost text-alerta hover:bg-rosa-soft" onClick={() => setCancelling(true)}>Cancelar este convite</button>
               <button className="btn btn-ghost" onClick={create} disabled={busy}>{busy && <Spinner />} Gerar novo código</button>
             </div>
             <ErrorNote>{error}</ErrorNote>

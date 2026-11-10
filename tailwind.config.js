@@ -4,18 +4,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        parede: '#EEEBE4',
-        papel: '#FBFAF7',
-        linho: '#E4E0D6',
-        tinta: { DEFAULT: '#1F2528', 2: '#4A5257', 3: '#7B8286' },
-        pinheiro: { DEFAULT: '#2E4A41', 2: '#3E6154', soft: '#DCE5DF' },
-        latao: { DEFAULT: '#B08A3E', 2: '#8F6E2B', soft: '#F0E6CC' },
-        rosa: { DEFAULT: '#B5766C', soft: '#F1DEDA' },
-        alerta: '#A4412F',
+        parede: 'rgb(var(--c-parede) / <alpha-value>)',
+        papel: 'rgb(var(--c-papel) / <alpha-value>)',
+        linho: 'rgb(var(--c-linho) / <alpha-value>)',
+        tinta: { DEFAULT: 'rgb(var(--c-tinta) / <alpha-value>)', 2: 'rgb(var(--c-tinta-2) / <alpha-value>)', 3: 'rgb(var(--c-tinta-3) / <alpha-value>)' },
+        pinheiro: { DEFAULT: 'rgb(var(--c-azul) / <alpha-value>)', 2: 'rgb(var(--c-azul-2) / <alpha-value>)', soft: 'rgb(var(--c-azul-soft) / <alpha-value>)' },
+        latao: { DEFAULT: 'rgb(var(--c-ouro) / <alpha-value>)', 2: 'rgb(var(--c-ouro-2) / <alpha-value>)', soft: 'rgb(var(--c-ouro-soft) / <alpha-value>)' },
+        rosa: { DEFAULT: 'rgb(var(--c-rosa) / <alpha-value>)', soft: 'rgb(var(--c-rosa-soft) / <alpha-value>)' },
+        alerta: 'rgb(var(--c-alerta) / <alpha-value>)',
       },
       fontFamily: {
-        display: ['"Instrument Serif"', 'Georgia', 'serif'],
-        sans: ['"Hanken Grotesk Variable"', 'system-ui', 'sans-serif'],
+        display: ['"Albert Sans Variable"', 'system-ui', 'sans-serif'],
+        sans: ['"Albert Sans Variable"', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         papel: '0 1px 1px rgba(31,37,40,.06), 0 6px 14px -6px rgba(31,37,40,.16)',

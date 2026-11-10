@@ -1,34 +1,19 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Eye, EyeOff, MailCheck } from 'lucide-react'
-import { friendlyError } from '../lib/supabase'
+import { friendlyError, IS_DEMO } from '../lib/supabase'
 import { useAuth } from '../state/auth'
 import { getPendingInvite, setPendingInvite } from '../state/invite'
 import { ErrorNote, Field, FullScreenLoader, Logo, Spinner } from '../components/ui'
 
-/* ---------- Pequenas "fotografias" ilustradas para o painel de acesso ---------- */
-function Scene({ kind }: { kind: 'casa' | 'viagem' | 'aliancas' | 'estrada' }) {
-  const common = { viewBox: '0 0 200 240', preserveAspectRatio: 'xMidYMid slice', className: 'h-full w-full', 'aria-hidden': true } as const
-  if (kind === 'casa') return (
-    <svg {...common}><rect width="200" height="240" fill="#DCE5DF" /><circle cx="150" cy="58" r="24" fill="#F0E6CC" /><rect y="170" width="200" height="70" fill="#A9BDB0" />
-      <rect x="52" y="104" width="86" height="68" fill="#FBFAF7" /><path d="M44 106 95 62l51 44z" fill="#2E4A41" /><rect x="86" y="130" width="18" height="42" fill="#B08A3E" /><rect x="60" y="120" width="16" height="16" fill="#E4E0D6" /><rect x="114" y="120" width="16" height="16" fill="#E4E0D6" />
-      <circle cx="26" cy="150" r="22" fill="#6F8F7C" /><rect x="24" y="168" width="4" height="10" fill="#4A5257" /></svg>)
-  if (kind === 'viagem') return (
-    <svg {...common}><rect width="200" height="240" fill="#F0E6CC" /><circle cx="100" cy="112" r="34" fill="#B5766C" opacity=".9" /><rect y="132" width="200" height="108" fill="#4F6B7D" />
-      {[142, 158, 176, 196].map((y, i) => <path key={y} d={`M${20 + i * 14} ${y} h${150 - i * 26}`} stroke="#FBFAF7" strokeOpacity=".45" strokeWidth="2" />)}
-      <path d="M22 70 C70 30 130 40 176 22" fill="none" stroke="#2E4A41" strokeWidth="1.6" strokeDasharray="4 5" /><path d="m176 22-12 2 5 5z" fill="#2E4A41" /></svg>)
-  if (kind === 'aliancas') return (
-    <svg {...common}><rect width="200" height="240" fill="#F1DEDA" /><circle cx="84" cy="122" r="38" fill="none" stroke="#B08A3E" strokeWidth="7" /><circle cx="122" cy="122" r="38" fill="none" stroke="#8F6E2B" strokeWidth="7" /><path d="M99 70 108 58l9 12-9 8z" fill="#FBFAF7" stroke="#B08A3E" strokeWidth="2" /></svg>)
-  return (
-    <svg {...common}><rect width="200" height="240" fill="#E4E9EE" /><path d="M0 150 200 110v130H0z" fill="#5E6770" /><path d="M20 196 188 150" stroke="#FBFAF7" strokeWidth="3" strokeDasharray="14 12" /><circle cx="60" cy="60" r="20" fill="#FBFAF7" opacity=".9" /><path d="M0 120c40-24 80-4 120-20s60-4 80-12v42H0z" fill="#8A9BA8" opacity=".7" /></svg>)
-}
+/* ---------- Fotos do painel de acesso ---------- */
+const photo = (n: string) => `${import.meta.env.BASE_URL}demo/${n}.jpg`
 
-function Print({ kind, className, giro, cap }: { kind: Parameters<typeof Scene>[0]['kind']; className: string; giro: string; cap: string }) {
+function Print({ src, className, cap }: { src: string; className: string; cap: string }) {
   return (
-    <figure className={`absolute bg-papel p-2.5 pb-0 shadow-erguido rounded-[4px] ${className}`} style={{ transform: `rotate(${giro})` }}>
-      <span className="tape tape-a" aria-hidden="true" />
-      <div className="aspect-[5/6] overflow-hidden rounded-[2px]"><Scene kind={kind} /></div>
-      <figcaption className="py-2.5 font-display text-[19px] leading-none text-tinta">{cap}</figcaption>
+    <figure className={`absolute ${className}`}>
+      <img src={photo(src)} alt="" className="block w-full rounded-[4px] object-cover shadow-[0_14px_28px_-14px_rgba(20,26,44,.45)]" style={{ aspectRatio: src === 'paris' ? '3/4' : '4/3' }} />
+      <figcaption className="hand pt-2">{cap}</figcaption>
     </figure>
   )
 }
@@ -36,13 +21,13 @@ function Print({ kind, className, giro, cap }: { kind: Parameters<typeof Scene>[
 export function AuthLayout({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
   return (
     <div className="grid min-h-dvh lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
-      <aside className="relative hidden overflow-hidden border-r border-linho/70 lg:block" aria-hidden="true">
-        <div className="absolute inset-0 bg-[radial-gradient(900px_500px_at_30%_20%,rgba(255,255,255,.7),transparent_60%)]" />
-        <Print kind="casa" className="left-[9%] top-[9%] w-[34%]" giro="-3deg" cap="Nossa casa" />
-        <Print kind="viagem" className="left-[47%] top-[14%] w-[30%]" giro="2.4deg" cap="Paris, juntos" />
-        <Print kind="aliancas" className="left-[17%] top-[49%] w-[27%]" giro="1.8deg" cap="Para sempre" />
-        <Print kind="estrada" className="left-[50%] top-[47%] w-[33%]" giro="-2deg" cap="Sem pressa" />
-        <p className="absolute bottom-[7%] left-[9%] max-w-[470px] font-display text-[40px] leading-[1.04] text-tinta">
+      <aside className="relative hidden overflow-hidden border-r border-tinta/15 lg:block" aria-hidden="true">
+        <div className="absolute left-10 top-9"><Logo /></div>
+        <Print src="casa" className="left-[10%] top-[16%] w-[40%]" cap="nossa casa, um dia" />
+        <Print src="paris" className="left-[56%] top-[10%] w-[27%]" cap="Paris, só nós dois" />
+        <Print src="praia" className="left-[48%] top-[50%] w-[38%]" cap="uma semana sem pressa" />
+        <Print src="japao" className="left-[10%] top-[56%] w-[26%]" cap="Japão na primavera" />
+        <p className="absolute bottom-[5%] left-10 max-w-[520px] text-[22px] font-medium leading-snug text-tinta">
           Dois corações, muitos sonhos e uma vida inteira para conquistar.
         </p>
       </aside>
@@ -72,7 +57,7 @@ function InviteNote() {
   const [sp] = useSearchParams()
   const code = sp.get('convite') ?? getPendingInvite()
   if (!code) return null
-  return <p className="mb-6 rounded-[12px] bg-latao-soft/70 px-4 py-3 text-[14.5px] text-tinta">Você tem um convite para entrar em um quadro. Depois de entrar, é só aceitar.</p>
+  return <p className="mb-6 rounded-[10px] bg-latao-soft px-4 py-3 text-[14.5px] text-tinta">Você tem um convite para entrar em um quadro. Depois de entrar, é só aceitar.</p>
 }
 
 /* ---------------- Entrar ---------------- */
@@ -96,6 +81,13 @@ export function LoginPage() {
       <h1 className="page-title">Que bom ter vocês de volta.</h1>
       <p className="mt-3 mb-8 text-[16px] text-tinta-2">Entre para ver o quadro de sonhos de vocês.</p>
       <InviteNote />
+      {IS_DEMO && (
+        <div className="mb-7 rounded-[12px] bg-latao-soft p-4">
+          <p className="text-[14px] font-bold"><span className="sold-dot mr-2 align-middle" />Versão de demonstração</p>
+          <p className="mt-1 text-[15px] leading-snug text-tinta-2">Não precisa de cadastro. Os dados ficam só no seu navegador.</p>
+          <button type="button" className="btn btn-primary mt-3 w-full" onClick={async () => { await signIn('demo@exemplo.com', 'demonstracao'); nav('/quadro', { replace: true }) }}>Entrar na demonstração</button>
+        </div>
+      )}
       <form className="space-y-5" onSubmit={async (e) => {
         e.preventDefault(); setBusy(true); setError(null)
         try { await signIn(email, password); nav((loc.state as { from?: string } | null)?.from ?? '/quadro', { replace: true }) }

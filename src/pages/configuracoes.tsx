@@ -1,10 +1,10 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { Camera, LogOut } from 'lucide-react'
-import { friendlyError, supabase } from '../lib/supabase'
+import { friendlyError } from '../lib/supabase'
 import { formatDate } from '../lib/format'
 import { useAuth } from '../state/auth'
 import { useBoard } from '../state/board'
-import { usePrefs, type SortMode } from '../state/prefs'
+import { usePrefs, type ThemeMode } from '../state/prefs'
 import { useToast } from '../state/toast'
 import { useShell } from '../components/Shell'
 import { Avatar, ConfirmDialog, ErrorNote, Field, Spinner } from '../components/ui'
@@ -14,7 +14,7 @@ function Section({ title, text, children }: { title: string; text?: string; chil
   return (
     <section className="grid gap-6 border-t border-linho py-9 md:grid-cols-[minmax(0,300px)_minmax(0,1fr)] md:gap-12">
       <div>
-        <h2 className="text-[30px] leading-none">{title}</h2>
+        <h2 className="text-[22px] leading-none">{title}</h2>
         {text && <p className="mt-3 text-[14.5px] leading-relaxed text-tinta-2">{text}</p>}
       </div>
       <div className="max-w-[560px]">{children}</div>
@@ -27,8 +27,8 @@ function Switch({ checked, onChange, label, hint }: { checked: boolean; onChange
     <div className="flex items-start justify-between gap-6">
       <div><p className="text-[15.5px] font-semibold">{label}</p>{hint && <p className="hint !mt-1">{hint}</p>}</div>
       <button role="switch" aria-checked={checked} aria-label={label} onClick={() => onChange(!checked)}
-        className={`relative mt-0.5 h-7 w-12 shrink-0 rounded-full transition ${checked ? 'bg-pinheiro' : 'bg-[#c9c4b8]'}`}>
-        <span className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-all ${checked ? 'left-[22px]' : 'left-0.5'}`} />
+        className={`relative mt-0.5 h-7 w-12 shrink-0 rounded-full transition ${checked ? 'bg-pinheiro' : 'bg-tinta-3/40'}`}>
+        <span className={`absolute top-0.5 h-6 w-6 rounded-full bg-papel shadow transition-all ${checked ? 'left-[22px]' : 'left-0.5'}`} />
       </button>
     </div>
   )
@@ -63,13 +63,12 @@ export function ConfiguracoesPage() {
     <>
       <PageHead title="Configurações" />
 
-      <Section title="Seu perfil" text="Como você aparece para o seu par no quadro.">
+      <Section title="Perfil">
         <div className="flex items-center gap-5">
           <Avatar userId={b.meId} name={b.state?.me.display_name} path={b.state?.me.avatar_path} size={76} />
           <div>
             <button className="btn btn-soft btn-sm" disabled={busy === 'avatar'} onClick={() => file.current?.click()}>{busy === 'avatar' ? <Spinner size={15} /> : <Camera size={16} />} {b.state?.me.avatar_path ? 'Trocar foto' : 'Adicionar foto'}</button>
-            <p className="hint">Sem foto, aparecem suas iniciais.</p>
-            <input ref={file} type="file" accept="image/*" className="sr-only" tabIndex={-1} onChange={(e) => {
+                        <input ref={file} type="file" accept="image/*" className="sr-only" tabIndex={-1} onChange={(e) => {
               const f = e.target.files?.[0]; e.target.value = ''
               if (f) void run('avatar', () => b.uploadAvatar(f), 'Foto atualizada.')
             }} />
@@ -91,21 +90,21 @@ export function ConfiguracoesPage() {
         </form>
       </Section>
 
-      <Section title="Nosso quadro" text="O nome do casal e a frase que ficam no topo do mural.">
+      <Section title="Quadro">
         <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); void run('couple', () => b.saveCouple({ name: coupleName.trim(), motto: motto.trim() || null }), 'Quadro atualizado.') }}>
           <Field label="Nome do casal" htmlFor="s-cn"><input id="s-cn" className="field" value={coupleName} onChange={(e) => setCoupleName(e.target.value)} maxLength={80} required /></Field>
-          <Field label="Frase do quadro" htmlFor="s-mo" hint="Deixe em branco para usar a frase padrão."><input id="s-mo" className="field" value={motto} onChange={(e) => setMotto(e.target.value)} maxLength={160} placeholder={DEFAULT_MOTTO} /></Field>
+          <Field label="Frase do quadro" htmlFor="s-mo" hint="Em branco, usa a frase padrão."><input id="s-mo" className="field" value={motto} onChange={(e) => setMotto(e.target.value)} maxLength={160} placeholder={DEFAULT_MOTTO} /></Field>
           <button className="btn btn-primary" disabled={busy === 'couple' || !coupleName.trim()}>{busy === 'couple' && <Spinner />} Salvar quadro</button>
         </form>
       </Section>
 
-      <Section title="Seu par" text="Cada pessoa tem o próprio login. As duas contas enxergam o mesmo quadro e mais ninguém.">
+      <Section title="Seu par">
         {b.partner ? (
           <div>
             <div className="flex items-center gap-4">
               <Avatar userId={b.partner.user_id} name={b.partner.display_name} path={b.partner.avatar_path} size={56} />
               <div className="min-w-0">
-                <p className="font-display text-[28px] leading-none">{b.partner.display_name}</p>
+                <p className="text-[18px] font-semibold leading-none">{b.partner.display_name}</p>
                 <p className="mt-1.5 truncate text-[14px] text-tinta-2">{b.partner.email}</p>
                 <p className="mt-0.5 text-[13px] text-tinta-3">No quadro desde {formatDate(b.partner.joined_at)}</p>
               </div>
@@ -121,31 +120,31 @@ export function ConfiguracoesPage() {
         )}
       </Section>
 
-      <Section title="Preferências" text="Valem só neste aparelho.">
+      <Section title="Aparência" text="Vale só para este aparelho.">
         <div className="space-y-6">
-          <Switch checked={prefs.showValues} onChange={(v) => set({ showValues: v })} label="Mostrar valores no mural" hint="Esconde os valores nas fotos, útil quando alguém está olhando a sua tela." />
-          <Field label="Ordem dos sonhos no mural" htmlFor="s-sort">
-            <select id="s-sort" className="field" value={prefs.sort} onChange={(e) => set({ sort: e.target.value as SortMode })}>
-              <option value="recent">Mais recentes primeiro</option><option value="oldest">Mais antigos primeiro</option><option value="target">Pela data desejada</option>
-            </select>
-          </Field>
+          <div>
+            <p className="label">Tema</p>
+            <div className="seg" role="group" aria-label="Tema do sistema">
+              {([['auto', 'Automático'], ['light', 'Claro'], ['dark', 'Escuro']] as [ThemeMode, string][]).map(([v, l]) => (
+                <button key={v} aria-pressed={prefs.theme === v} onClick={() => set({ theme: v })}>{l}</button>
+              ))}
+            </div>
+            <p className="hint">Automático segue o tema do seu aparelho.</p>
+          </div>
+          <Switch checked={prefs.showValues} onChange={(v) => set({ showValues: v })} label="Mostrar valores no mural" />
         </div>
       </Section>
 
-      <Section title="Privacidade e sessão" text="O quadro é visível apenas para as duas pessoas vinculadas. A proteção acontece no banco de dados, não só na tela.">
-        <div className="space-y-3">
-          <p className="text-[14.5px] leading-relaxed text-tinta-2">As fotos ficam em um espaço privado e só abrem por links temporários, gerados para quem está dentro do quadro.</p>
-          <div className="flex flex-wrap gap-2 pt-2">
-            <button className="btn btn-soft" onClick={() => void signOut()}><LogOut size={17} /> Sair da conta</button>
-            <button className="btn btn-ghost" onClick={async () => { await supabase.auth.signOut({ scope: 'global' }) }}>Sair de todos os aparelhos</button>
-          </div>
-          {alone && (
-            <div className="mt-8 border-t border-linho pt-6">
-              <p className="text-[14.5px] leading-relaxed text-tinta-2">Como você é a única pessoa no quadro, é possível apagá-lo por completo, com todas as fotos.</p>
-              <button className="btn btn-danger mt-4" onClick={() => setDeleting(true)}>Excluir o quadro</button>
-            </div>
-          )}
+      <Section title="Conta">
+        <div className="flex flex-wrap gap-2">
+          <button className="btn btn-soft" onClick={() => void signOut()}><LogOut size={17} /> Sair da conta</button>
         </div>
+        {alone && (
+          <div className="mt-8 border-t border-linho pt-6">
+            <p className="text-[14.5px] leading-relaxed text-tinta-2">Apaga o quadro por completo, com todas as fotos. Só é possível enquanto você é a única pessoa nele.</p>
+            <button className="btn btn-danger mt-4" onClick={() => setDeleting(true)}>Excluir o quadro</button>
+          </div>
+        )}
       </Section>
 
       <ConfirmDialog open={leaving} danger title="Desvincular do quadro?" confirmLabel="Desvincular"

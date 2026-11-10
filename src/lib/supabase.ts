@@ -1,12 +1,15 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { demoClient } from './demo/client'
+
+export const IS_DEMO = import.meta.env.VITE_DEMO === '1'
 
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 
-export const isConfigured = Boolean(url && key && !url.includes('SEU-PROJETO'))
+export const isConfigured = IS_DEMO || Boolean(url && key && !url.includes('SEU-PROJETO'))
 
 // A chave "anon" é pública por definição: a proteção dos dados é feita por RLS no banco.
-export const supabase = createClient(
+const real = (): SupabaseClient => createClient(
   isConfigured ? (url as string) : 'http://localhost:54321',
   isConfigured ? (key as string) : 'sem-configuracao',
   {
@@ -14,6 +17,8 @@ export const supabase = createClient(
     realtime: { params: { eventsPerSecond: 10 } },
   },
 )
+
+export const supabase: SupabaseClient = IS_DEMO ? (demoClient as SupabaseClient) : real()
 
 export const BUCKET = 'dream-images'
 

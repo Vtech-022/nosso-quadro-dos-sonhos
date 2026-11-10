@@ -30,7 +30,7 @@ export function AtividadesPage() {
       <div className="max-w-[760px] space-y-12">
         {groups.map(([day, list]) => (
           <section key={day} aria-label={day}>
-            <h2 className="mb-2 border-b border-linho pb-2 text-[30px] leading-none">{day}</h2>
+            <h2 className="mb-2 border-b border-linho pb-2 text-[22px] leading-none">{day}</h2>
             <ul className="divide-y divide-linho/70">
               {list.map((a) => {
                 const m = b.memberOf(a.actor_id)
@@ -52,7 +52,7 @@ export function AtividadesPage() {
                 return (
                   <li key={a.id}>
                     {open
-                      ? <button className="flex w-full items-start gap-3.5 rounded-[10px] py-4 text-left transition hover:bg-papel/60" onClick={() => openDetail(a.dream_id!)}>{inner}</button>
+                      ? <button className="flex w-full items-start gap-3.5 rounded-[3px] py-4 text-left transition hover:bg-papel/60" onClick={() => openDetail(a.dream_id!)}>{inner}</button>
                       : <div className="flex items-start gap-3.5 py-4">{inner}</div>}
                   </li>
                 )

@@ -207,7 +207,7 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
       <form onSubmit={submit} noValidate>
         <div className="flex items-start justify-between gap-4 px-5 pt-5 sm:px-8 sm:pt-7">
           <div>
-            <h2 className="text-[34px] sm:text-[42px] leading-none">{editing ? 'Editar sonho' : 'Adicionar um sonho'}</h2>
+            <h2 className="text-[24px] sm:text-[22px] leading-none">{editing ? 'Editar sonho' : 'Adicionar um sonho'}</h2>
             <p className="mt-2 text-[15px] text-tinta-2">{editing ? 'Ajuste o que mudou. O seu par vê a atualização na hora.' : 'Comece pela foto. Ela é o que vai ficar pendurado no quadro.'}</p>
           </div>
           <CloseButton onClick={onClose} />
@@ -235,10 +235,10 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
                 <button
                   type="button"
                   onClick={() => input.current?.click()}
-                  className="group flex w-full flex-col items-center justify-center gap-3 rounded-[10px] border-[1.5px] border-dashed border-[#bdb6a6] bg-white/50 px-6 py-14 text-center transition hover:border-pinheiro hover:bg-white"
+                  className="group flex w-full flex-col items-center justify-center gap-3 rounded-[3px] border-[1.5px] border-dashed border-[#bdb6a6] bg-white/50 px-6 py-14 text-center transition hover:border-pinheiro hover:bg-papel"
                 >
                   <span className="grid h-14 w-14 place-items-center rounded-full bg-pinheiro-soft text-pinheiro transition group-hover:scale-105"><ImagePlus size={26} strokeWidth={1.5} /></span>
-                  <span className="font-display text-[24px] leading-tight">Escolher uma foto</span>
+                  <span className="font-display text-[19px] leading-tight">Escolher uma foto</span>
                   <span className="text-[13.5px] text-tinta-2 max-w-[260px]">Da galeria do celular ou do computador. Você também pode arrastar a imagem até aqui.</span>
                 </button>
                 {removeCover && cover && (
@@ -280,7 +280,7 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
                 {!newCat && <button type="button" className="chip border-dashed" onClick={() => setNewCat({ name: '', icon: 'star' })}><Plus size={15} /> Nova categoria</button>}
               </div>
               {newCat && (
-                <div className="mt-3 rounded-[12px] border border-linho bg-white p-3.5 space-y-3">
+                <div className="mt-3 rounded-[3px] border border-linho bg-papel p-3.5 space-y-3">
                   <input className="field" placeholder="Nome da categoria" value={newCat.name} maxLength={40} onChange={(e) => setNewCat({ ...newCat, name: e.target.value })} aria-label="Nome da nova categoria" />
                   <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Ícone da categoria">
                     {ICON_KEYS.map((k) => (

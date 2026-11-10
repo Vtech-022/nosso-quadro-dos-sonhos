@@ -11,6 +11,8 @@ import { DreamDetail } from './DreamDetail'
 import { DreamForm } from './DreamForm'
 import { InviteDialog } from './InviteDialog'
 import { Avatar, AvatarPair, CloseButton, Modal } from './ui'
+import { IS_DEMO } from '../lib/supabase'
+import { demoReset } from '../lib/demo/client'
 
 interface ShellCtx {
   openDetail: (id: string) => void
@@ -21,11 +23,11 @@ const Ctx = createContext<ShellCtx>({ openDetail: () => {}, openAdd: () => {}, o
 export const useShell = () => useContext(Ctx)
 
 const NAV = [
-  { to: '/quadro', label: 'Nosso Quadro', icon: Frame },
+  { to: '/quadro', label: 'Quadro', icon: Frame },
   { to: '/categorias', label: 'Categorias', icon: LayoutGrid },
-  { to: '/em-planejamento', label: 'Em planejamento', icon: Compass },
-  { to: '/conquistas', label: 'Nossas conquistas', icon: Sparkles },
-  { to: '/financeiro', label: 'Planos financeiros', icon: Wallet },
+  { to: '/em-planejamento', label: 'Planejamento', icon: Compass },
+  { to: '/conquistas', label: 'Conquistas', icon: Sparkles },
+  { to: '/financeiro', label: 'Financeiro', icon: Wallet },
   { to: '/atividades', label: 'Atividades', icon: ActivityIcon },
 ]
 
@@ -38,7 +40,7 @@ function NotificationsDialog({ open, onClose }: { open: boolean; onClose: () => 
       <div className="p-5 sm:p-7">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-[32px] sm:text-[38px] leading-none">Notificações</h2>
+            <h2 className="text-[24px] sm:text-[26px] leading-none">Notificações</h2>
             <p className="mt-2 text-[14.5px] text-tinta-2">O que {b.partner?.display_name ?? 'seu par'} fez no quadro.</p>
           </div>
           <CloseButton onClick={onClose} />
@@ -54,7 +56,7 @@ function NotificationsDialog({ open, onClose }: { open: boolean; onClose: () => 
               return (
                 <li key={n.id}>
                   <button
-                    className="flex w-full items-start gap-3 rounded-[10px] px-2 py-3.5 text-left transition hover:bg-white/70"
+                    className="flex w-full items-start gap-3 rounded-[3px] px-2 py-3.5 text-left transition hover:bg-papel/70"
                     onClick={() => {
                       void b.markRead([n.id])
                       onClose()
@@ -101,18 +103,31 @@ export function Shell() {
     <Ctx.Provider value={ctx}>
       <a href="#conteudo" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-lg focus:bg-papel focus:px-4 focus:py-2">Ir para o conteúdo</a>
 
+      {IS_DEMO && (
+        <div className="bg-tinta text-papel">
+          <div className="mx-auto flex max-w-[1640px] flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 text-[13px] sm:px-8 lg:px-12">
+            <span className="flex items-center gap-2 font-semibold"><span className="sold-dot" /> Demonstração</span>
+            <span className="text-papel/70">Tudo o que você fizer fica só neste navegador. O sistema real usa Supabase.</span>
+            <span className="ml-auto flex gap-4 font-semibold">
+              <button className="underline-offset-4 hover:underline" onClick={() => demoReset('examples')}>Restaurar exemplos</button>
+              <button className="underline-offset-4 hover:underline" onClick={() => demoReset('empty')}>Começar do zero</button>
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* ---------- Cabeçalho (estilo de revista) ---------- */}
       <header className="sticky top-0 z-30 border-b border-linho/70 bg-parede/85 backdrop-blur-md">
         <div className="mx-auto flex h-[60px] max-w-[1640px] items-center gap-3 px-4 sm:px-8 lg:px-12">
           <NavLink to="/quadro" className="flex min-w-0 items-center gap-3" aria-label="Ir para Nosso Quadro">
             <AvatarPair size={34} />
-            <span className="truncate font-display text-[22px] leading-none">{coupleName}</span>
+            <span className="max-w-[220px] truncate text-[15px] font-semibold leading-none">{coupleName}</span>
           </NavLink>
 
           <nav className="ml-8 hidden items-center gap-1 lg:flex" aria-label="Principal">
             {NAV.map((n) => (
               <NavLink key={n.to} to={n.to}
-                className={({ isActive }) => `relative rounded-[8px] px-3 py-2 text-[14.5px] font-medium transition ${isActive ? 'text-tinta after:absolute after:inset-x-3 after:-bottom-[13px] after:h-[2px] after:bg-pinheiro' : 'text-tinta-2 hover:text-tinta'}`}>
+                className={({ isActive }) => `relative whitespace-nowrap rounded-[8px] px-3 py-2 text-[14.5px] font-medium transition ${isActive ? 'text-tinta after:absolute after:inset-x-3 after:-bottom-[13px] after:h-[2px] after:bg-pinheiro' : 'text-tinta-2 hover:text-tinta'}`}>
                 {n.label}
               </NavLink>
             ))}
@@ -139,7 +154,7 @@ export function Shell() {
           <MobTab to="/quadro" icon={Frame} label="Quadro" />
           <MobTab to="/em-planejamento" icon={Compass} label="Planejando" />
           <div className="flex justify-center">
-            <button className="-mt-6 grid h-14 w-14 place-items-center rounded-full bg-pinheiro text-papel shadow-erguido transition active:scale-95" onClick={() => openAdd()} aria-label="Adicionar um sonho">
+            <button className="-mt-6 grid h-14 w-14 place-items-center rounded-full bg-pinheiro text-[rgb(var(--on-azul))] shadow-erguido transition active:scale-95" onClick={() => openAdd()} aria-label="Adicionar um sonho">
               <Plus size={26} />
             </button>
           </div>
@@ -152,7 +167,7 @@ export function Shell() {
 
       <Modal open={more} onClose={() => setMore(false)} label="Mais opções" size="sm">
         <div className="p-5">
-          <div className="mb-2 flex items-center justify-between"><h2 className="text-[30px] leading-none">Mais</h2><CloseButton onClick={() => setMore(false)} /></div>
+          <div className="mb-2 flex items-center justify-between"><h2 className="text-[22px] leading-none">Mais</h2><CloseButton onClick={() => setMore(false)} /></div>
           <ul className="divide-y divide-linho/80">
             {[...NAV.filter((n) => ['/categorias', '/financeiro', '/atividades'].includes(n.to)), { to: '/configuracoes', label: 'Configurações', icon: Settings }].map((n) => (
               <li key={n.to}><button className="flex w-full items-center gap-3 py-3.5 text-left text-[16px]" onClick={() => { setMore(false); nav(n.to) }}><n.icon size={20} strokeWidth={1.6} className="text-pinheiro" /> {n.label}</button></li>

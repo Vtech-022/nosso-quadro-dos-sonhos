@@ -35,7 +35,7 @@ function Entry({ d, flip }: { d: Dream; flip: boolean }) {
         <p className="text-[13.5px] font-semibold text-latao-2">{d.achieved_at ? formatDate(d.achieved_at) : ''}</p>
         <h3 className="mt-2 text-[40px] leading-[.98] sm:text-[52px]">{d.title}</h3>
         {d.achievement_note
-          ? <p className="mt-5 border-l-2 border-latao pl-4 font-display text-[26px] italic leading-snug sm:text-[30px]">“{d.achievement_note}”</p>
+          ? <p className="mt-5 border-l-2 border-latao pl-4 text-[20px] italic leading-snug sm:text-[24px]">“{d.achievement_note}”</p>
           : d.description && <p className="mt-4 max-w-[520px] text-[16px] leading-relaxed text-tinta-2">{d.description}</p>}
         <p className="mt-5 flex items-center gap-2.5 text-[14px] text-tinta-2">
           <Avatar userId={who?.user_id} name={who?.display_name} path={who?.avatar_path} size={26} />
@@ -81,16 +81,16 @@ export function ConquistasPage() {
       <PageHead title="Nossas conquistas" sub="O álbum dos sonhos que viraram realidade. Do mais recente ao primeiro." />
 
       <section aria-label="Retrospectiva" className="mb-14 grid grid-cols-2 gap-x-6 gap-y-8 border-y border-linho py-8 sm:grid-cols-4">
-        <div><div className="font-display text-[58px] leading-[.85]">{done.length}</div><p className="mt-2 text-[13.5px] text-tinta-2">{done.length === 1 ? 'sonho realizado' : 'sonhos realizados'}</p></div>
-        <div><div className="font-display text-[58px] leading-[.85]">{thisYear}</div><p className="mt-2 text-[13.5px] text-tinta-2">em {new Date().getFullYear()}</p></div>
-        <div><div className="font-display text-[58px] leading-[.85]">{realized > 0 ? moneyCompact(realized) : '—'}</div><p className="mt-2 text-[13.5px] text-tinta-2">{realized > 0 ? 'em sonhos com valor' : 'nenhum com valor informado'}</p></div>
-        <div><div className="font-display text-[30px] leading-[1.05] sm:text-[34px]">{first?.title}</div><p className="mt-2 text-[13.5px] text-tinta-2">a primeira conquista, em {first?.achieved_at ? formatDate(first.achieved_at) : ''}</p></div>
+        <div><div className="font-display text-[44px] leading-[.85]">{done.length}</div><p className="mt-2 text-[13.5px] text-tinta-2">{done.length === 1 ? 'sonho realizado' : 'sonhos realizados'}</p></div>
+        <div><div className="font-display text-[44px] leading-[.85]">{thisYear}</div><p className="mt-2 text-[13.5px] text-tinta-2">em {new Date().getFullYear()}</p></div>
+        <div><div className="font-display text-[44px] leading-[.85]">{realized > 0 ? moneyCompact(realized) : '—'}</div><p className="mt-2 text-[13.5px] text-tinta-2">{realized > 0 ? 'em sonhos com valor' : 'nenhum com valor informado'}</p></div>
+        <div><div className="font-display text-[22px] leading-[1.05] sm:text-[26px]">{first?.title}</div><p className="mt-2 text-[13.5px] text-tinta-2">a primeira conquista, em {first?.achieved_at ? formatDate(first.achieved_at) : ''}</p></div>
       </section>
 
       <div className="space-y-20 sm:space-y-28">
         {years.map(([year, list]) => (
           <section key={year} aria-label={String(year)}>
-            <h2 className="mb-10 font-display text-[72px] leading-none text-tinta/90 sm:text-[110px]">{year}</h2>
+            <h2 className="mb-10 font-display text-[56px] leading-none text-tinta sm:text-[96px]">{year}</h2>
             <div className="space-y-16 sm:space-y-24">
               {list.map((d, i) => <Entry key={d.id} d={d} flip={i % 2 === 1} />)}
             </div>

@@ -1,6 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, MemoryRouter } from 'react-router-dom'
+import { IS_DEMO } from './lib/supabase'
+
+const Router = IS_DEMO ? MemoryRouter : BrowserRouter
 import App from './App'
 import { AuthProvider } from './state/auth'
 import { PrefsProvider } from './state/prefs'
@@ -9,7 +12,7 @@ import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <Router>
       <ToastProvider>
         <PrefsProvider>
           <AuthProvider>
@@ -17,6 +20,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           </AuthProvider>
         </PrefsProvider>
       </ToastProvider>
-    </BrowserRouter>
+    </Router>
   </React.StrictMode>,
 )
