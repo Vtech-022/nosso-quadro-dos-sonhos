@@ -52,7 +52,7 @@ export function AtividadesPage() {
                 return (
                   <li key={a.id}>
                     {open
-                      ? <button className="flex w-full items-start gap-3.5 rounded-[3px] py-4 text-left transition hover:bg-papel/60" onClick={() => openDetail(a.dream_id!)}>{inner}</button>
+                      ? <button className="flex w-full items-start gap-3.5 rounded-[14px] py-4 text-left transition hover:bg-papel/60" onClick={() => openDetail(a.dream_id!)}>{inner}</button>
                       : <div className="flex items-start gap-3.5 py-4">{inner}</div>}
                   </li>
                 )

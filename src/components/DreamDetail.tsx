@@ -118,7 +118,7 @@ export function DreamDetail({ dreamId, onClose }: { dreamId: string | null; onCl
 
             {/* Valores */}
             {dream.estimated_value != null && (
-              <div className="mt-6 rounded-[3px] border border-linho bg-papel/70 p-4 sm:p-5">
+              <div className="mt-6 rounded-[14px] border border-linho bg-papel/70 p-4 sm:p-5">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2 text-[13px] font-semibold text-tinta-2"><Wallet size={16} className="text-pinheiro" /> Valores</span>
                   {!achieved && !editSaved && <button className="text-[13px] font-semibold text-pinheiro hover:underline" onClick={() => { setSavedValue(dream.saved_value); setEditSaved(true) }}>Atualizar acumulado</button>}
@@ -146,7 +146,7 @@ export function DreamDetail({ dreamId, onClose }: { dreamId: string | null; onCl
 
             {/* Conquista */}
             {achieved && (
-              <div className="mt-6 rounded-[3px] bg-latao-soft/60 p-4 sm:p-5">
+              <div className="mt-6 rounded-[14px] bg-latao-soft/60 p-4 sm:p-5">
                 <p className="text-[13px] font-semibold text-latao-2">Conquistado em {dream.achieved_at ? formatDate(dream.achieved_at) : ''}</p>
                 <p className="mt-1 text-[14.5px] text-tinta-2">Registrado por {dream.achieved_by === b.meId ? 'você' : b.nameOf(dream.achieved_by)}</p>
                 {dream.achievement_note && <p className="mt-3 border-l-2 border-latao pl-3 text-[18px] italic leading-snug">“{dream.achievement_note}”</p>}

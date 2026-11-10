@@ -8,22 +8,29 @@ import { useBoard } from '../state/board'
 
 /* ---------------- Marca ---------------- */
 export function LogoMark({ size = 34 }: { size?: number }) {
+  const id = useId()
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
-      <rect x="6" y="10" width="34" height="42" rx="5" fill="#2E5BD0" transform="rotate(-8 23 31)" />
-      <rect x="22" y="14" width="34" height="42" rx="5" fill="#F4B400" transform="rotate(6 39 35)" />
-      <rect x="28" y="22" width="22" height="22" rx="3" fill="#fff" opacity=".85" transform="rotate(6 39 35)" />
+      <defs>
+        <linearGradient id={`g${id}`} x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#7C9BFF" /><stop offset="1" stopColor="#2A4BC9" />
+        </linearGradient>
+      </defs>
+      <rect x="2" y="2" width="60" height="60" rx="17" fill={`url(#g${id})`} />
+      <path d="M22 16h9.5C41.7 16 48 22.6 48 32s-6.3 16-16.5 16H22V16Zm8 7v18h1.6c5 0 8.2-3.5 8.2-9s-3.2-9-8.2-9H30Z" fill="#fff" />
+      <circle cx="47" cy="15" r="4.2" fill="#F4B400" />
     </svg>
   )
 }
 
-export function Logo({ compact = false }: { compact?: boolean }) {
+export function Logo({ compact = false, light = false }: { compact?: boolean; light?: boolean }) {
   return (
     <div className="flex items-center gap-3">
       <LogoMark />
       {!compact && (
-        <div className="font-display text-[17px] font-semibold leading-[1.05] text-tinta">
-          Nosso Quadro<br />dos Sonhos
+        <div className="leading-none">
+          <div className={`font-display text-[18.5px] font-bold tracking-[-0.03em] ${light ? 'text-white' : 'text-tinta'}`}>Dreamspace</div>
+          <div className={`mt-1 text-[11.5px] font-medium ${light ? 'text-white/65' : 'text-tinta-3'}`}>Espaço dos sonhos</div>
         </div>
       )}
     </div>
@@ -241,7 +248,7 @@ export function Field({ label, hint, children, htmlFor }: { label: string; hint?
 export function ErrorNote({ children }: { children?: ReactNode }) {
   if (!children) return null
   return (
-    <p role="alert" className="rounded-[3px] bg-rosa-soft border border-alerta/30 text-alerta text-[14px] px-3.5 py-2.5 leading-snug">
+    <p role="alert" className="rounded-[14px] bg-rosa-soft border border-alerta/30 text-alerta text-[14px] px-3.5 py-2.5 leading-snug">
       {children}
     </p>
   )
@@ -258,7 +265,7 @@ export function Seal({ year, size = 72, className = '', style }: {
       <circle cx="50" cy="50" r="47" fill="#F4B400" />
       <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(20,26,44,.35)" strokeWidth="1" strokeDasharray="1.5 3" />
       <text fill="#141A2C" fontSize="8" fontWeight="700" style={{ fontFamily: '"Albert Sans Variable", sans-serif' }}>
-        <textPath href={`#c${id}`} startOffset="0" textLength="196" lengthAdjust="spacing">CONQUISTADO NO NOSSO QUADRO</textPath>
+        <textPath href={`#c${id}`} startOffset="0" textLength="196" lengthAdjust="spacing">CONQUISTADO NO DREAMSPACE ·</textPath>
       </text>
       <text x="50" y="58" textAnchor="middle" fill="#141A2C" fontSize="22" fontWeight="800" style={{ fontFamily: '"Albert Sans Variable", sans-serif' }}>{year}</text>
     </svg>

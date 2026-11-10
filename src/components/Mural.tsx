@@ -27,38 +27,29 @@ export const DreamTile = memo(function DreamTile({ dream, index, onOpen }: TileP
       onClick={() => onOpen(dream.id)}
       aria-label={`${dream.title}. ${achieved ? 'Conquistado' : 'Em planejamento'}. Abrir detalhes.`}
     >
-      <div className="print-frame">
-        <div className="print-mat">
-          <div className="print-photo">
-            {achieved && <span className="tag-done">Realizado</span>}
-            {src ? (
-              <img
-                src={src}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                style={{ objectPosition: `${cover?.focus_x ?? 50}% ${cover?.focus_y ?? 50}%` }}
-              />
-            ) : (
-              <div className={`print-empty absolute inset-0 tone-${cat?.tone ?? 6}`}>
-                <CategoryIcon name={cat?.icon ?? 'star'} size={56} />
-              </div>
-            )}
-          </div>
-        </div>
+      <div className="print-photo">
+        {src ? (
+          <img src={src} alt="" loading="lazy" decoding="async" style={{ objectPosition: `${cover?.focus_x ?? 50}% ${cover?.focus_y ?? 50}%` }} />
+        ) : (
+          <div className="print-empty absolute inset-0"><CategoryIcon name={cat?.icon ?? 'star'} size={52} /></div>
+        )}
+      </div>
+      <div className="print-shade" />
+      <div className="print-top">
+        {achieved ? <span className="pill pill-gold">Conquistado</span> : cat && <span className="pill"><CategoryIcon name={cat.icon} size={13} /> {cat.name}</span>}
       </div>
 
       <div className="print-caption">
         <h3>{dream.title}</h3>
-        <div className="mt-0.5 flex items-baseline gap-2 min-w-0">
+        <div className="mt-1 flex items-baseline gap-2 min-w-0">
           <span className="hand truncate">
-            {achieved ? `Realizado em ${year}` : dream.target_date ? `Para ${formatMonthYear(dream.target_date)}` : cat?.name ?? 'Em planejamento'}
+            {achieved ? `Realizado em ${year}` : dream.target_date ? `Para ${formatMonthYear(dream.target_date)}` : 'Em planejamento'}
           </span>
           {prefs.showValues && dream.estimated_value != null && (
-            <span className="ml-auto pl-2 text-[12.5px] font-semibold text-tinta-2 tabular-nums whitespace-nowrap">{money(dream.estimated_value)}</span>
+            <span className="ml-auto pl-2 text-[12.5px] font-semibold text-white tabular-nums whitespace-nowrap">{money(dream.estimated_value)}</span>
           )}
         </div>
-        {showMeter && <div className="meter mt-2"><i style={{ width: `${pct}%` }} /></div>}
+        {showMeter && <div className="meter mt-2.5"><i style={{ width: `${pct}%` }} /></div>}
       </div>
     </button>
   )

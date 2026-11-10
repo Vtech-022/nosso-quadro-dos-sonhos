@@ -52,7 +52,7 @@ export function OnboardingPage() {
       {incoming.length > 0 && (
         <div className="mt-7 space-y-3">
           {incoming.map((i) => (
-            <div key={i.code} className="rounded-[3px] border border-latao/40 bg-latao-soft/60 p-4">
+            <div key={i.code} className="rounded-[14px] border border-latao/40 bg-latao-soft/60 p-4">
               <p className="text-[15px] leading-snug"><strong className="font-semibold">{i.inviter_name ?? 'Alguém'}</strong> convidou você para o quadro <strong className="font-semibold">{i.couple_name}</strong>.</p>
               <Link to={`/convite/${i.code}`} className="btn btn-brass btn-sm mt-3">Ver convite</Link>
             </div>

@@ -208,7 +208,7 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
         <div className="flex items-start justify-between gap-4 px-5 pt-5 sm:px-8 sm:pt-7">
           <div>
             <h2 className="text-[24px] sm:text-[22px] leading-none">{editing ? 'Editar sonho' : 'Adicionar um sonho'}</h2>
-            <p className="mt-2 text-[15px] text-tinta-2">{editing ? 'Ajuste o que mudou. O seu par vê a atualização na hora.' : 'Comece pela foto. Ela é o que vai ficar pendurado no quadro.'}</p>
+            <p className="mt-2 text-[15px] text-tinta-2">{editing ? 'Ajuste o que mudou. O seu par vê a atualização na hora.' : 'Comece pela foto. Ela é o que aparece no espaço de vocês.'}</p>
           </div>
           <CloseButton onClick={onClose} />
         </div>
@@ -235,7 +235,7 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
                 <button
                   type="button"
                   onClick={() => input.current?.click()}
-                  className="group flex w-full flex-col items-center justify-center gap-3 rounded-[3px] border-[1.5px] border-dashed border-[#bdb6a6] bg-white/50 px-6 py-14 text-center transition hover:border-pinheiro hover:bg-papel"
+                  className="group flex w-full flex-col items-center justify-center gap-3 rounded-[16px] border-[1.5px] border-dashed border-tinta-3/50 bg-tinta/[.04] px-6 py-14 text-center transition hover:border-pinheiro hover:bg-papel"
                 >
                   <span className="grid h-14 w-14 place-items-center rounded-full bg-pinheiro-soft text-pinheiro transition group-hover:scale-105"><ImagePlus size={26} strokeWidth={1.5} /></span>
                   <span className="font-display text-[19px] leading-tight">Escolher uma foto</span>
@@ -280,7 +280,7 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
                 {!newCat && <button type="button" className="chip border-dashed" onClick={() => setNewCat({ name: '', icon: 'star' })}><Plus size={15} /> Nova categoria</button>}
               </div>
               {newCat && (
-                <div className="mt-3 rounded-[3px] border border-linho bg-papel p-3.5 space-y-3">
+                <div className="mt-3 rounded-[14px] border border-linho bg-papel p-3.5 space-y-3">
                   <input className="field" placeholder="Nome da categoria" value={newCat.name} maxLength={40} onChange={(e) => setNewCat({ ...newCat, name: e.target.value })} aria-label="Nome da nova categoria" />
                   <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Ícone da categoria">
                     {ICON_KEYS.map((k) => (
@@ -315,13 +315,12 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
               <Field label="Data desejada" htmlFor="d-date">
                 <input id="d-date" type="date" className="field" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
               </Field>
-              <div>
-                <span className="label">Status</span>
-                <div className="seg w-full" role="group" aria-label="Status do sonho">
-                  <button type="button" className="flex-1 !px-2" aria-pressed={status === 'planning'} onClick={() => setStatus('planning')}>Em planejamento</button>
-                  <button type="button" className="flex-1 !px-2" aria-pressed={status === 'achieved'} onClick={() => setStatus('achieved')}>Conquistado</button>
-                </div>
-              </div>
+              <Field label="Status" htmlFor="d-status">
+                <select id="d-status" className="field" value={status} onChange={(e) => setStatus(e.target.value as DreamStatus)}>
+                  <option value="planning">Em planejamento</option>
+                  <option value="achieved">Conquistado</option>
+                </select>
+              </Field>
             </div>
 
             <div className="flex items-center gap-2.5 text-[13.5px] text-tinta-2">
@@ -336,7 +335,7 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
           <div className={`flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end ${error ? 'mt-3' : ''}`}>
             <button type="button" className="btn btn-soft" onClick={onClose} disabled={busy}>Cancelar</button>
             <button type="submit" className="btn btn-primary min-w-[190px]" disabled={busy || !dirty}>
-              {busy ? <Spinner /> : <Check size={18} />} {editing ? 'Salvar alterações' : 'Adicionar ao quadro'}
+              {busy ? <Spinner /> : <Check size={18} />} {editing ? 'Salvar alterações' : 'Adicionar sonho'}
             </button>
           </div>
         </div>

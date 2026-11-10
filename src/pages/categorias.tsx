@@ -98,7 +98,7 @@ export function CategoriasPage() {
                   {r.dreams.slice(0, 4).map((d, i) => {
                     const cv = b.coverOf(d)
                     const src = b.url(cv?.thumb_path ?? cv?.path)
-                    return <span key={d.id} className="-ml-3 h-14 w-12 overflow-hidden rounded-[3px] border-[3px] border-papel bg-linho shadow-papel first:ml-0" style={{ transform: `rotate(${(i - 1.5) * 3.5}deg)` }}>{src && <img src={src} alt="" className="h-full w-full object-cover" style={{ objectPosition: `${cv?.focus_x}% ${cv?.focus_y}%` }} />}</span>
+                    return <span key={d.id} className="-ml-3 h-14 w-12 overflow-hidden rounded-[14px] border-[3px] border-papel bg-linho shadow-papel first:ml-0" style={{ transform: `rotate(${(i - 1.5) * 3.5}deg)` }}>{src && <img src={src} alt="" className="h-full w-full object-cover" style={{ objectPosition: `${cv?.focus_x}% ${cv?.focus_y}%` }} />}</span>
                   })}
                 </span>
                 {r.cat && (

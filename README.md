@@ -1,4 +1,4 @@
-# NOSSO QUADRO DOS SONHOS
+# DREAMSPACE — ESPAÇO DOS SONHOS
 
 Um mural particular para casais organizarem, visualizarem e conquistarem seus sonhos.
 React + TypeScript + Tailwind no frontend; Supabase (PostgreSQL, Auth, Storage, Realtime) no backend.

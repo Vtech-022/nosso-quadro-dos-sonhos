@@ -1,40 +1,59 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { Eye, EyeOff, MailCheck } from 'lucide-react'
+import { Eye, EyeOff, MailCheck, MapPin } from 'lucide-react'
+import { SCENES, sceneUrl } from '../lib/photos'
 import { friendlyError, IS_DEMO } from '../lib/supabase'
 import { useAuth } from '../state/auth'
 import { getPendingInvite, setPendingInvite } from '../state/invite'
 import { ErrorNote, Field, FullScreenLoader, Logo, Spinner } from '../components/ui'
 
-/* ---------- Fotos do painel de acesso ---------- */
-const photo = (n: string) => `${import.meta.env.BASE_URL}demo/${n}.jpg`
-
-function Print({ src, className, cap }: { src: string; className: string; cap: string }) {
-  return (
-    <figure className={`absolute ${className}`}>
-      <img src={photo(src)} alt="" className="block w-full rounded-[4px] object-cover shadow-[0_14px_28px_-14px_rgba(20,26,44,.45)]" style={{ aspectRatio: src === 'paris' ? '3/4' : '4/3' }} />
-      <figcaption className="hand pt-2">{cap}</figcaption>
-    </figure>
-  )
-}
-
+/* ---------- Acesso: fotografia em tela cheia + cartão de vidro ---------- */
 export function AuthLayout({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
+  const [i, setI] = useState(0)
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    const r = window.requestAnimationFrame(() => setReady(true))
+    const t = window.setInterval(() => setI((n) => (n + 1) % SCENES.length), 8000)
+    return () => { window.cancelAnimationFrame(r); window.clearInterval(t) }
+  }, [])
+  const scene = SCENES[i]
+  const w = typeof window !== 'undefined' && window.innerWidth < 800 ? 1100 : 2000
   return (
-    <div className="grid min-h-dvh lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
-      <aside className="relative hidden overflow-hidden border-r border-tinta/15 lg:block" aria-hidden="true">
-        <div className="absolute left-10 top-9"><Logo /></div>
-        <Print src="casa" className="left-[10%] top-[16%] w-[40%]" cap="nossa casa, um dia" />
-        <Print src="paris" className="left-[56%] top-[10%] w-[27%]" cap="Paris, só nós dois" />
-        <Print src="praia" className="left-[48%] top-[50%] w-[38%]" cap="uma semana sem pressa" />
-        <Print src="japao" className="left-[10%] top-[56%] w-[26%]" cap="Japão na primavera" />
-        <p className="absolute bottom-[5%] left-10 max-w-[520px] text-[22px] font-medium leading-snug text-tinta">
-          Dois corações, muitos sonhos e uma vida inteira para conquistar.
-        </p>
-      </aside>
-      <main className="flex min-h-dvh flex-col px-5 py-8 sm:px-10">
-        <div className="lg:hidden"><Logo /></div>
-        <div className={`m-auto w-full ${wide ? 'max-w-[560px]' : 'max-w-[440px]'} py-8`}>{children}</div>
-      </main>
+    <div className="force-dark relative flex min-h-dvh flex-col text-tinta">
+      <div className="auth-bg" aria-hidden="true">
+        {SCENES.map((s, n) => (n === i || n === (i + SCENES.length - 1) % SCENES.length || n === (i + 1) % SCENES.length) && (
+          <img key={s.id} src={sceneUrl(s, w)} alt="" className={n === i && ready ? 'on' : ''} />
+        ))}
+      </div>
+
+      <header className="flex items-center justify-between px-5 py-5 sm:px-10 sm:py-7">
+        <Logo light />
+        <span className="pill hidden sm:inline-flex"><MapPin size={13} /> {scene.place}</span>
+      </header>
+
+      <div className="mx-auto grid w-full max-w-[1240px] flex-1 items-center gap-10 px-5 pb-10 sm:px-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-16">
+        <section className="hidden lg:block" aria-hidden="true">
+          <p className="eyebrow !text-white/70">Um espaço só de vocês dois</p>
+          <p className="mt-5 max-w-[560px] font-display text-[clamp(2.6rem,4.6vw,4.1rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-white">
+            Os sonhos de vocês, num lugar só.
+          </p>
+          <p className="mt-6 max-w-[440px] text-[18px] leading-relaxed text-white/80">{scene.line}</p>
+          <ul className="mt-10 flex flex-wrap gap-2.5 text-[13.5px] font-medium text-white/90">
+            <li className="pill !h-9 !px-4 !text-[13.5px]">Fotos de cada sonho</li>
+            <li className="pill !h-9 !px-4 !text-[13.5px]">Metas e valores</li>
+            <li className="pill !h-9 !px-4 !text-[13.5px]">Os dois editam ao mesmo tempo</li>
+          </ul>
+          <div className="mt-12 flex gap-2">
+            {SCENES.map((s, n) => (
+              <span key={s.id} className={`h-1 rounded-full transition-all duration-700 ${n === i ? 'w-10 bg-white' : 'w-4 bg-white/35'}`} />
+            ))}
+          </div>
+        </section>
+
+        <main className={`auth-card mx-auto w-full p-6 sm:p-9 ${wide ? 'max-w-[580px]' : 'max-w-[440px] lg:w-[440px]'}`}>
+          {children}
+        </main>
+      </div>
     </div>
   )
 }
@@ -78,8 +97,8 @@ export function LoginPage() {
 
   return (
     <AuthLayout>
-      <h1 className="page-title">Que bom ter vocês de volta.</h1>
-      <p className="mt-3 mb-8 text-[16px] text-tinta-2">Entre para ver o quadro de sonhos de vocês.</p>
+      <h1 className="page-title">Bem-vindos de volta.</h1>
+      <p className="mt-3 mb-8 text-[16px] text-tinta-2">Entre para ver o espaço dos sonhos de vocês.</p>
       <InviteNote />
       {IS_DEMO && (
         <div className="mb-7 rounded-[12px] bg-latao-soft p-4">
@@ -98,7 +117,7 @@ export function LoginPage() {
         <ErrorNote>{error}</ErrorNote>
         <button className="btn btn-primary w-full" disabled={busy}>{busy && <Spinner />} Entrar</button>
       </form>
-      <div className="mt-6 flex flex-col gap-2 text-[14.5px] text-tinta-2 sm:flex-row sm:justify-between">
+      <div className="mt-6 flex flex-col gap-2 text-[14.5px] text-tinta-2">
         <Link className="font-semibold text-pinheiro hover:underline" to="/recuperar-senha">Esqueci minha senha</Link>
         <span>Ainda não tem conta? <Link className="font-semibold text-pinheiro hover:underline" to={code ? `/cadastrar?convite=${code}` : '/cadastrar'}>Criar conta</Link></span>
       </div>
@@ -134,7 +153,7 @@ export function SignupPage() {
 
   return (
     <AuthLayout>
-      <h1 className="page-title">Vamos começar o quadro.</h1>
+      <h1 className="page-title">Criem o espaço de vocês.</h1>
       <p className="mt-3 mb-8 text-[16px] text-tinta-2">Cada pessoa tem a própria conta. O quadro é compartilhado só entre os dois.</p>
       <InviteNote />
       <form className="space-y-5" onSubmit={async (e) => {

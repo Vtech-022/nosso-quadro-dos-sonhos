@@ -22,7 +22,7 @@ export function InviteDialog({ open, onClose }: { open: boolean; onClose: () => 
 
   const coupleName = b.state?.couple?.name ?? 'nosso quadro'
   const myName = b.me?.display_name ?? ''
-  const msg = (link: string) => `${myName} convidou você para o Nosso Quadro dos Sonhos (${coupleName}). Entre pelo link e comece a pendurar os sonhos de vocês: ${link}`
+  const msg = (link: string) => `${myName} convidou você para o Dreamspace (${coupleName}). Entre pelo link e comece a pendurar os sonhos de vocês: ${link}`
 
   const copy = async (what: 'link' | 'code', value: string) => {
     try { await navigator.clipboard.writeText(value); setCopied(what); window.setTimeout(() => setCopied(null), 1800) }
@@ -71,10 +71,10 @@ export function InviteDialog({ open, onClose }: { open: boolean; onClose: () => 
             </div>
             <div className="flex flex-wrap gap-2 pt-1">
               <a className="btn btn-soft" target="_blank" rel="noreferrer" href={`https://wa.me/?text=${encodeURIComponent(msg(link))}`}><MessageCircle size={17} /> WhatsApp</a>
-              <a className="btn btn-soft" href={`mailto:${inv.invited_email ?? ''}?subject=${encodeURIComponent('Convite para o Nosso Quadro dos Sonhos')}&body=${encodeURIComponent(msg(link))}`}><Mail size={17} /> E-mail</a>
-              {canShare && <button className="btn btn-soft" onClick={() => navigator.share({ title: 'Nosso Quadro dos Sonhos', text: msg(link), url: link }).catch(() => {})}><Share2 size={17} /> Compartilhar</button>}
+              <a className="btn btn-soft" href={`mailto:${inv.invited_email ?? ''}?subject=${encodeURIComponent('Convite para o Dreamspace')}&body=${encodeURIComponent(msg(link))}`}><Mail size={17} /> E-mail</a>
+              {canShare && <button className="btn btn-soft" onClick={() => navigator.share({ title: 'Dreamspace', text: msg(link), url: link }).catch(() => {})}><Share2 size={17} /> Compartilhar</button>}
             </div>
-            {fresh && <p className="rounded-[3px] bg-pinheiro-soft px-3.5 py-2.5 text-[14px] text-pinheiro">Convite criado. O envio é feito por você, pelo aplicativo que preferir.</p>}
+            {fresh && <p className="rounded-[14px] bg-pinheiro-soft px-3.5 py-2.5 text-[14px] text-pinheiro">Convite criado. O envio é feito por você, pelo aplicativo que preferir.</p>}
             <div className="flex flex-wrap justify-between gap-2 border-t border-linho pt-5">
               <button className="btn btn-ghost text-alerta hover:bg-rosa-soft" onClick={() => setCancelling(true)}>Cancelar este convite</button>
               <button className="btn btn-ghost" onClick={create} disabled={busy}>{busy && <Spinner />} Gerar novo código</button>

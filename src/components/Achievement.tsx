@@ -41,12 +41,12 @@ export function AchieveDialog({ dream, onClose }: { dream: Dream | null; onClose
           <div>
             <span className="label">Foto da conquista</span>
             {preview ? (
-              <div className="relative overflow-hidden rounded-[3px] border border-linho">
+              <div className="relative overflow-hidden rounded-[14px] border border-linho">
                 <img src={preview} alt="Foto da conquista" className="max-h-[260px] w-full object-cover" />
                 <button type="button" className="btn btn-icon absolute right-2 top-2 bg-papel/90 hover:bg-papel" aria-label="Remover foto" onClick={() => { setFile(null); setPreview(null) }}><Trash2 size={17} /></button>
               </div>
             ) : (
-              <button type="button" onClick={() => input.current?.click()} className="flex w-full items-center gap-3 rounded-[3px] border-[1.5px] border-dashed border-[#bdb6a6] bg-white/50 px-4 py-4 text-left transition hover:border-pinheiro hover:bg-papel">
+              <button type="button" onClick={() => input.current?.click()} className="flex w-full items-center gap-3 rounded-[14px] border-[1.5px] border-dashed border-[#bdb6a6] bg-white/50 px-4 py-4 text-left transition hover:border-pinheiro hover:bg-papel">
                 <ImagePlus className="text-pinheiro" size={22} strokeWidth={1.5} />
                 <span className="text-[14.5px] text-tinta-2">Adicionar uma foto do momento <span className="text-tinta-3">(opcional)</span></span>
               </button>
@@ -122,7 +122,7 @@ export function CelebrationDialog() {
         <div className="mx-auto mt-7 max-w-[400px] border-t border-linho pt-6 animate-subir" style={{ animationDelay: '.75s' }}>
           <p className="font-display text-[24px] leading-tight">{c.title}</p>
           <p className="mt-2 text-[14px] text-tinta-3">{c.byName === 'Você' ? 'Registrado por você' : `Registrado por ${c.byName}`} em {formatDate(c.at)}</p>
-          {c.note && <p className="mt-4 rounded-[3px] bg-latao-soft/70 px-4 py-3 text-[15px] italic leading-relaxed text-tinta">“{c.note}”</p>}
+          {c.note && <p className="mt-4 rounded-[14px] bg-latao-soft/70 px-4 py-3 text-[15px] italic leading-relaxed text-tinta">“{c.note}”</p>}
         </div>
 
         <div className="mt-8 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-center animate-subir" style={{ animationDelay: '.9s' }}>
