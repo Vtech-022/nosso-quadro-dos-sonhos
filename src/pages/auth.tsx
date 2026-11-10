@@ -12,9 +12,9 @@ export function AuthLayout({ children, wide = false }: { children: ReactNode; wi
   const [i, setI] = useState(0)
   const [ready, setReady] = useState(false)
   useEffect(() => {
-    const r = window.requestAnimationFrame(() => setReady(true))
+    const r = window.setTimeout(() => setReady(true), 80)
     const t = window.setInterval(() => setI((n) => (n + 1) % SCENES.length), 8000)
-    return () => { window.cancelAnimationFrame(r); window.clearInterval(t) }
+    return () => { window.clearTimeout(r); window.clearInterval(t) }
   }, [])
   const scene = SCENES[i]
   const w = typeof window !== 'undefined' && window.innerWidth < 800 ? 1100 : 2000
