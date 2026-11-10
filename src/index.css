@@ -24,7 +24,7 @@
   --cols: 2;
   --glass-a: .74; --glass-line: rgb(255 255 255 / .9);
   --glow-a: .1;
-  --bg-img: url('/bg-light.webp'); --bg-op: 1; --bg-sat: 1.7; --bg-veil: .1;
+  --bg-img: url('/bg-light.webp'); --bg-op: 1; --bg-sat: 1.1; --bg-veil: .16; --bg-blur: 10px;
 }
 :root[data-theme='dark'], .force-dark {
   color-scheme: dark;
@@ -36,7 +36,7 @@
   --on-azul: 12 11 20;
   --glass-a: .58; --glass-line: rgb(255 255 255 / .1);
   --glow-a: .1;
-  --bg-img: url('/bg-dark.webp'); --bg-op: .95; --bg-sat: 1.25; --bg-veil: .3;
+  --bg-img: url('/bg-dark.webp'); --bg-op: .9; --bg-sat: 1.05; --bg-veil: .34; --bg-blur: 8px;
 }
 html.theme-anim *, html.theme-anim *::before { transition: background-color .35s ease, border-color .35s ease, color .25s ease, box-shadow .35s ease !important; }
 
@@ -209,7 +209,7 @@ html.theme-anim *, html.theme-anim *::before { transition: background-color .35s
    O desfoque fica só aqui; nada do conteúdo é desfocado. */
 .ambient { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: var(--parede); }
 .ambient::before, .ambient::after { content: ''; position: absolute; }
-.ambient::before { inset: -80px; background: var(--bg-img) center / cover no-repeat; filter: blur(46px) saturate(var(--bg-sat)); opacity: var(--bg-op); transform: scale(1.04); transition: opacity .5s ease; }
+.ambient::before { inset: -80px; background: var(--bg-img) center / cover no-repeat; filter: blur(var(--bg-blur)) saturate(var(--bg-sat)); opacity: var(--bg-op); transform: scale(1.03); transition: opacity .5s ease; }
 .ambient::after { inset: 0; background:
     radial-gradient(60% 50% at 50% 0%, transparent, rgb(var(--c-parede) / var(--bg-veil)) 100%),
     linear-gradient(180deg, rgb(var(--c-parede) / calc(var(--bg-veil) * .5)), rgb(var(--c-parede) / var(--bg-veil))); }
