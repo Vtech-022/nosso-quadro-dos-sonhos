@@ -40,6 +40,15 @@
 }
 html.theme-anim *, html.theme-anim *::before { transition: background-color .35s ease, border-color .35s ease, color .25s ease, box-shadow .35s ease !important; }
 
+/* Telas grandes: amplia a interface inteira em vez de deixar sobras nas laterais. */
+html { --z: 1; }
+@media (min-width: 1800px) { html { --z: 1.1; } }
+@media (min-width: 2100px) { html { --z: 1.25; } }
+@media (min-width: 2500px) { html { --z: 1.45; } }
+@media (min-width: 3200px) { html { --z: 1.8; } }
+html { zoom: var(--z); }
+.min-h-dvh { min-height: calc(100dvh / var(--z)) !important; }
+
 @layer base {
   html { -webkit-text-size-adjust: 100%; color-scheme: light; }
   html[data-theme='dark'] { color-scheme: dark; }
@@ -48,8 +57,9 @@ html.theme-anim *, html.theme-anim *::before { transition: background-color .35s
     background-color: var(--parede);
     font-size: 16.5px;
     font-optical-sizing: auto;
-    min-height: 100dvh;
+    min-height: calc(100dvh / var(--z));
     overscroll-behavior-y: none;
+    overflow-x: clip;
   }
   h1, h2, h3 { @apply font-display; font-weight: 600; letter-spacing: -0.022em; text-wrap: balance; }
   p, li, figcaption, label, .hint { text-wrap: pretty; }
@@ -241,7 +251,8 @@ html.theme-anim *, html.theme-anim *::before { transition: background-color .35s
 .auth-card .page-title { font-size: clamp(1.7rem, 2.6vw, 2.15rem); line-height: 1.08; }
 
 /* ---------- Menu lateral retrátil ---------- */
-.side { position: sticky; top: 20px; width: 72px; height: calc(100dvh - 40px); flex: none; z-index: 40; }
+.side { position: sticky; top: 20px; width: 72px; height: calc(100dvh / var(--z) - 40px); flex: none; z-index: 40; }
+@media (min-width: 1536px) { .side { top: 24px; height: calc(100dvh / var(--z) - 48px); } }
 .side-panel { position: absolute; inset: 0 auto 0 0; width: 72px; display: flex; flex-direction: column; padding: 12px; border-radius: 24px; overflow: hidden; transition: width .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease; }
 .side:hover .side-panel, .side:has(:focus-visible) .side-panel, .side-panel.open { width: 256px; box-shadow: 0 30px 60px -24px rgb(4 6 20 / .55); }
 .side-label { opacity: 0; white-space: nowrap; transition: opacity .18s ease; pointer-events: none; }

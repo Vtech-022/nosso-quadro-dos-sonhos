@@ -64,7 +64,7 @@ export function DreamDetail({ dreamId, onClose }: { dreamId: string | null; onCl
           <div className="relative bg-linho/70 p-4 sm:p-6 md:flex md:flex-col md:justify-center md:rounded-l-[22px]">
             <div className="relative overflow-hidden rounded-[6px] bg-linho shadow-papel">
               {src ? (
-                <img src={src} alt={dream.title} className="mx-auto max-h-[62dvh] w-full object-contain bg-papel" />
+                <img src={src} alt={dream.title} className="mx-auto max-h-[calc(62dvh/var(--z))] w-full object-contain bg-papel" />
               ) : (
                 <div className={`print-empty tone-${cat?.tone ?? 6} aspect-[4/3]`}><CategoryIcon name={cat?.icon ?? 'star'} size={72} /></div>
               )}

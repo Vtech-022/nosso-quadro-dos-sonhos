@@ -164,7 +164,7 @@ export function Shell() {
 
       <div className="ambient" aria-hidden="true" />
 
-      <div className="mx-auto flex max-w-[1720px] gap-5 lg:p-5">
+      <div className="flex gap-5 lg:p-5 2xl:gap-7 2xl:p-6">
         {/* ---------- Menu lateral: recolhido mostra ícones, abre ao passar o mouse ---------- */}
         <aside className="side hidden lg:block" aria-label="Menu">
           <div className="side-panel glass">{sideContent(false)}</div>
@@ -198,7 +198,7 @@ export function Shell() {
             </div>
           </header>
 
-          <main id="conteudo" className="px-4 pb-32 pt-6 sm:px-6 lg:px-1 lg:pb-16 lg:pt-7" key={loc.pathname}>
+          <main id="conteudo" className="px-4 pb-32 pt-6 sm:px-6 md:px-8 lg:px-1 lg:pb-16 lg:pt-7" key={loc.pathname}>
             <Outlet />
           </main>
         </div>

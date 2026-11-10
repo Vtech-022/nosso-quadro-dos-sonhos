@@ -130,7 +130,7 @@ export function Modal({ open, onClose, children, label, size = 'md', dismissable
         aria-modal="true"
         aria-label={label}
         tabIndex={-1}
-        className={`relative w-full ${width} max-h-[94dvh] overflow-y-auto overscroll-contain bg-papel rounded-t-[10px] sm:rounded-[12px] shadow-erguido animate-entrar focus:outline-none`}
+        className={`relative w-full ${width} max-h-[calc(94dvh/var(--z))] overflow-y-auto overscroll-contain bg-papel rounded-t-[10px] sm:rounded-[12px] shadow-erguido animate-entrar focus:outline-none`}
       >
         {children}
       </div>
