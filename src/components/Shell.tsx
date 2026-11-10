@@ -160,7 +160,7 @@ export function Shell() {
               <NavLink to="/quadro" className="lg:hidden" aria-label="Dreamspace, início"><LogoMark size={32} /></NavLink>
               <label className={`relative min-w-0 flex-1 lg:max-w-[420px] ${onBoard ? '' : 'invisible'}`}>
                 <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-tinta-3" />
-                <input className="h-10 w-full rounded-full border border-linho/70 bg-tinta/[.05] pl-10 pr-9 text-[14.5px] placeholder:text-tinta-3 focus:border-pinheiro focus:outline-none" placeholder="Buscar um sonho" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Buscar um sonho" />
+                <input className="h-10 w-full rounded-[11px] border border-linho/70 bg-tinta/[.05] pl-10 pr-9 text-[14.5px] placeholder:text-tinta-3 focus:border-tinta-3 focus:outline-none" placeholder="Buscar um sonho" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Buscar um sonho" />
                 {query && <button type="button" className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full text-tinta-3 hover:text-tinta" onClick={() => setQuery('')} aria-label="Limpar busca"><X size={15} /></button>}
               </label>
               <div className="ml-auto flex items-center gap-1.5">
@@ -169,7 +169,7 @@ export function Shell() {
                   {b.unread > 0 && <span className="absolute right-1 top-1 grid h-[17px] min-w-[17px] place-items-center rounded-full bg-latao px-1 text-[10.5px] font-bold text-[#141a2c]">{b.unread > 9 ? '9+' : b.unread}</span>}
                 </button>
                 <NavLink to="/configuracoes" className="btn btn-icon btn-ghost lg:hidden" aria-label="Configurações"><Settings size={20} strokeWidth={1.7} /></NavLink>
-                <button className="btn btn-primary ml-1 hidden !rounded-full sm:inline-flex" onClick={() => openAdd()}><Plus size={18} /> Novo sonho</button>
+                <button className="btn btn-primary ml-1 hidden sm:inline-flex" onClick={() => openAdd()}><Plus size={18} /> Novo sonho</button>
               </div>
             </div>
           </header>
@@ -186,7 +186,7 @@ export function Shell() {
           <MobTab to="/quadro" icon={Home} label="Início" />
           <MobTab to="/em-planejamento" icon={CalendarClock} label="Planejando" />
           <div className="flex justify-center">
-            <button className="-mt-6 grid h-14 w-14 place-items-center rounded-full bg-pinheiro text-[rgb(var(--on-azul))] shadow-erguido transition active:scale-95" onClick={() => openAdd()} aria-label="Adicionar um sonho">
+            <button className="-mt-6 grid h-14 w-14 place-items-center rounded-full bg-tinta text-parede shadow-erguido transition active:scale-95" onClick={() => openAdd()} aria-label="Adicionar um sonho">
               <Plus size={26} />
             </button>
           </div>

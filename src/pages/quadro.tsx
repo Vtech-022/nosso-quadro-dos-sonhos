@@ -27,7 +27,7 @@ export function PageHead({ title, sub, right }: { title: string; sub?: string; r
 function Stat({ icon: Icon, n, label, tone = 'azul' }: { icon: typeof Trophy; n: string | number; label: string; tone?: 'azul' | 'ouro' }) {
   return (
     <div className="panel flex items-center gap-4 p-4 sm:p-5">
-      <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-[14px] ${tone === 'ouro' ? 'bg-latao/15 text-latao' : 'bg-pinheiro/15 text-pinheiro'}`}><Icon size={22} strokeWidth={1.8} /></span>
+      <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-[14px] ${tone === 'ouro' ? 'bg-latao/15 text-latao' : 'bg-tinta/[.07] text-tinta'}`}><Icon size={22} strokeWidth={1.8} /></span>
       <div className="min-w-0">
         <div className="truncate font-display text-[24px] leading-none tabular-nums sm:text-[27px]">{n}</div>
         <div className="mt-1.5 truncate text-[13px] text-tinta-2">{label}</div>
@@ -89,15 +89,15 @@ export function QuadroPage() {
                 </div>
               )}
               <div className="mt-7 flex flex-wrap gap-3">
-                <button className="btn btn-white !rounded-full" onClick={() => openDetail(feat.id)}>Abrir sonho <ArrowRight size={17} /></button>
-                <button className="btn btn-glass !rounded-full" onClick={() => openAdd()}><Plus size={17} /> Novo sonho</button>
+                <button className="btn btn-white" onClick={() => openDetail(feat.id)}>Abrir sonho <ArrowRight size={17} /></button>
+                <button className="btn btn-glass" onClick={() => openAdd()}><Plus size={17} /> Novo sonho</button>
               </div>
             </>
           ) : (
             <>
               <h1 className="mt-4 text-[clamp(1.9rem,4vw,3.2rem)] font-semibold leading-[1.03] tracking-[-0.03em]">O espaço de vocês começa aqui.</h1>
               <p className="mt-3 max-w-[520px] text-[16px] leading-relaxed text-white/80">{motto}</p>
-              <div className="mt-7"><button className="btn btn-white !rounded-full" onClick={() => openAdd()}><Plus size={17} /> Adicionar o primeiro sonho</button></div>
+              <div className="mt-7"><button className="btn btn-white" onClick={() => openAdd()}><Plus size={17} /> Adicionar o primeiro sonho</button></div>
             </>
           )}
         </div>

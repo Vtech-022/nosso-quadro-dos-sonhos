@@ -34,7 +34,7 @@ export function AuthLayout({ children, wide = false }: { children: ReactNode; wi
       <div className="mx-auto grid w-full max-w-[1240px] flex-1 items-center gap-10 px-5 pb-10 sm:px-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-16">
         <section className="hidden lg:block" aria-hidden="true">
           <p className="eyebrow !text-white/70">Um espaço só de vocês dois</p>
-          <p className="mt-5 max-w-[560px] font-display text-[clamp(2.6rem,4.6vw,4.1rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-white">
+          <p className="mt-5 max-w-[620px] font-display text-[clamp(2.6rem,4.6vw,4.1rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-white [text-wrap:balance]">
             Os sonhos de vocês, num lugar só.
           </p>
           <p className="mt-6 max-w-[440px] text-[18px] leading-relaxed text-white/80">{scene.line}</p>

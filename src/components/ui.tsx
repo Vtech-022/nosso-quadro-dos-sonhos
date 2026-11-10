@@ -8,17 +8,12 @@ import { useBoard } from '../state/board'
 
 /* ---------------- Marca ---------------- */
 export function LogoMark({ size = 34 }: { size?: number }) {
-  const id = useId()
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
-      <defs>
-        <linearGradient id={`g${id}`} x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#7C9BFF" /><stop offset="1" stopColor="#2A4BC9" />
-        </linearGradient>
-      </defs>
-      <rect x="2" y="2" width="60" height="60" rx="17" fill={`url(#g${id})`} />
-      <path d="M22 16h9.5C41.7 16 48 22.6 48 32s-6.3 16-16.5 16H22V16Zm8 7v18h1.6c5 0 8.2-3.5 8.2-9s-3.2-9-8.2-9H30Z" fill="#fff" />
-      <circle cx="47" cy="15" r="4.2" fill="#F4B400" />
+      <rect x="2" y="2" width="60" height="60" rx="16" fill="#18181B" stroke="rgba(255,255,255,.2)" strokeWidth="2" />
+      <path d="M40.5 12.5a20.5 20.5 0 1 0 11 36.2A17 17 0 0 1 40.5 12.5Z" fill="#F4B400"/>
+      <path d="M45 22.5c.7 3.7 1.8 4.8 5.5 5.5-3.7.7-4.8 1.8-5.5 5.5-.7-3.7-1.8-4.8-5.5-5.5 3.7-.7 4.8-1.8 5.5-5.5Z" fill="#fff"/>
+      <circle cx="52.5" cy="19" r="1.6" fill="#fff"/>
     </svg>
   )
 }

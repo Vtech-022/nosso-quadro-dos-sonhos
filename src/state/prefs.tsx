@@ -17,7 +17,7 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     const apply = () => {
       const dark = prefs.theme === 'dark' || (prefs.theme === 'auto' && mq.matches)
       document.documentElement.dataset.theme = dark ? 'dark' : 'light'
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0e121e' : '#fbfaf8')
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#111113' : '#f1f1ef')
     }
     apply()
     mq.addEventListener('change', apply)
