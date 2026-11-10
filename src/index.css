@@ -238,9 +238,9 @@ html.theme-anim *, html.theme-anim *::before { transition: background-color .35s
 /* ---------- Menu lateral retrátil ---------- */
 .side { position: sticky; top: 20px; width: 72px; height: calc(100dvh - 40px); flex: none; z-index: 40; }
 .side-panel { position: absolute; inset: 0 auto 0 0; width: 72px; display: flex; flex-direction: column; padding: 12px; border-radius: 24px; overflow: hidden; transition: width .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease; }
-.side:hover .side-panel, .side:focus-within .side-panel, .side-panel.open { width: 256px; box-shadow: 0 30px 60px -24px rgb(4 6 20 / .55); }
+.side:hover .side-panel, .side:has(:focus-visible) .side-panel, .side-panel.open { width: 256px; box-shadow: 0 30px 60px -24px rgb(4 6 20 / .55); }
 .side-label { opacity: 0; white-space: nowrap; transition: opacity .18s ease; pointer-events: none; }
-.side:hover .side-label, .side:focus-within .side-label, .side-panel.open .side-label { opacity: 1; transition-delay: .08s; pointer-events: auto; }
+.side:hover .side-label, .side:has(:focus-visible) .side-label, .side-panel.open .side-label { opacity: 1; transition-delay: .08s; pointer-events: auto; }
 .side-link { width: 100%; flex: none; overflow: hidden; }
 .side-link svg { flex: none; margin-left: 2px; }
 .icon-btn { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; color: rgb(var(--c-tinta-2)); transition: background .2s, color .2s; position: relative; }

@@ -89,7 +89,7 @@ export function QuadroPage() {
           <p className="mt-2 font-display text-[clamp(1.9rem,3.6vw,2.9rem)] font-semibold leading-[1.05] tracking-[-0.03em] [text-wrap:balance]">Sonhe. Planeje. Conquiste.</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <button className="btn btn-white" onClick={() => openAdd()}><Plus size={17} /> Novo sonho</button>
-            {b.dreams.length > 0 && <button className="btn btn-glass" onClick={scrollToDreams}>Ver meus sonhos <ArrowRight size={17} /></button>}
+            {b.dreams.length > 0 && <button className="btn btn-glass" onClick={scrollToDreams}>Ver nossos sonhos <ArrowRight size={17} /></button>}
           </div>
         </div>
       </section>
@@ -106,7 +106,7 @@ export function QuadroPage() {
       <section className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start">
         <div className="panel p-5 sm:p-6">
           <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="flex items-center gap-2.5 text-[19px] leading-none"><Sparkles size={18} className="text-pinheiro" /> {inProgress.length ? 'Seus sonhos em andamento' : 'Ideias para começar'}</h2>
+            <h2 className="flex items-center gap-2.5 text-[19px] leading-none"><Sparkles size={18} className="text-pinheiro" /> {inProgress.length ? 'Nossos sonhos em andamento' : 'Ideias para começar'}</h2>
             {b.dreams.length > 0 && <button className="flex items-center gap-1 text-[13.5px] font-semibold text-pinheiro hover:underline" onClick={scrollToDreams}>Ver todos <ArrowRight size={14} /></button>}
           </div>
           <div className="grid grid-cols-2 gap-3.5 md:grid-cols-4">
@@ -174,7 +174,7 @@ export function QuadroPage() {
       {b.dreams.length > 0 && (
         <div id="meus-sonhos" className="mt-10 scroll-mt-6 space-y-4">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 className="text-[22px] leading-none sm:text-[24px]">Meus sonhos</h2>
+            <h2 className="text-[22px] leading-none sm:text-[24px]">Nossos sonhos</h2>
             <span className="text-[13.5px] text-tinta-3">{visible.length} de {b.dreams.length}</span>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3">

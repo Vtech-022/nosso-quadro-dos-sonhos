@@ -77,18 +77,18 @@ export function CategoriasPage() {
         right={<button className="btn btn-soft self-start" onClick={() => setEditing('new')}><Plus size={18} /> Nova categoria</button>}
       />
 
-      <ul className="divide-y divide-linho border-y border-linho">
+      <ul className="grid gap-3 lg:grid-cols-2">
         {rows.map((r) => {
           const value = r.dreams.reduce((s, d) => s + (d.estimated_value ?? 0), 0)
           const open = selected === r.id
           return (
-            <li key={r.id}>
-              <div className={`group flex items-center gap-3 py-4 sm:gap-5 ${open ? 'bg-papel/60' : ''}`}>
-                <button className="flex min-w-0 flex-1 items-center gap-4 text-left sm:gap-5" aria-expanded={open} onClick={() => setSelected(open ? null : r.id)}>
-                  <span className={`tone-chip tone-${r.tone} grid h-12 w-12 shrink-0 place-items-center rounded-full`}><CategoryIcon name={r.icon} size={22} /></span>
+            <li key={r.id} className={`panel overflow-hidden ${open ? 'lg:col-span-2 !border-pinheiro/50' : ''}`}>
+              <div className="group flex items-center gap-3 px-4 py-3.5">
+                <button className="flex min-w-0 flex-1 items-center gap-3.5 text-left" aria-expanded={open} onClick={() => setSelected(open ? null : r.id)}>
+                  <span className={`tone-chip tone-${r.tone} grid h-10 w-10 shrink-0 place-items-center rounded-[12px]`}><CategoryIcon name={r.icon} size={19} /></span>
                   <span className="min-w-0">
-                    <span className="block truncate font-display text-[21px] leading-none sm:text-[26px]">{r.name}</span>
-                    <span className="mt-1.5 block text-[13.5px] text-tinta-2">
+                    <span className="block truncate text-[15.5px] font-semibold leading-tight">{r.name}</span>
+                    <span className="mt-1 block truncate text-[12.5px] text-tinta-3">
                       {r.dreams.length === 0 ? 'Nenhum sonho ainda' : (() => { const a = r.dreams.filter((d) => d.status === 'achieved').length; return `${r.dreams.length} ${r.dreams.length === 1 ? 'sonho' : 'sonhos'}, ${a} ${a === 1 ? 'conquistado' : 'conquistados'}` })()}
                       {value > 0 && <> · {moneyCompact(value)} em estimativas</>}
                     </span>
@@ -98,18 +98,18 @@ export function CategoriasPage() {
                   {r.dreams.slice(0, 4).map((d, i) => {
                     const cv = b.coverOf(d)
                     const src = b.url(cv?.thumb_path ?? cv?.path)
-                    return <span key={d.id} className="-ml-3 h-14 w-12 overflow-hidden rounded-[14px] border-[3px] border-papel bg-linho shadow-papel first:ml-0" style={{ transform: `rotate(${(i - 1.5) * 3.5}deg)` }}>{src && <img src={src} alt="" className="h-full w-full object-cover" style={{ objectPosition: `${cv?.focus_x}% ${cv?.focus_y}%` }} />}</span>
+                    return <span key={d.id} className="-ml-2 h-9 w-9 overflow-hidden rounded-full border-2 border-papel bg-linho first:ml-0" data-i={i}>{src && <img src={src} alt="" className="h-full w-full object-cover" style={{ objectPosition: `${cv?.focus_x}% ${cv?.focus_y}%` }} />}</span>
                   })}
                 </span>
                 {r.cat && (
-                  <span className="flex shrink-0 gap-1">
-                    <button className="btn btn-icon btn-ghost" aria-label={`Editar ${r.name}`} onClick={() => setEditing(r.cat!)}><Pencil size={17} /></button>
-                    <button className="btn btn-icon btn-ghost" aria-label={`Excluir ${r.name}`} onClick={() => setDeleting(r.cat!)}><Trash2 size={17} /></button>
+                  <span className="flex shrink-0 gap-0.5 border-l border-linho/70 pl-2">
+                    <button className="icon-btn icon-btn-sm" aria-label={`Editar ${r.name}`} onClick={() => setEditing(r.cat!)}><Pencil size={15} /></button>
+                    <button className="icon-btn icon-btn-sm hover:!text-alerta" aria-label={`Excluir ${r.name}`} onClick={() => setDeleting(r.cat!)}><Trash2 size={15} /></button>
                   </span>
                 )}
               </div>
               {open && (
-                <div className="pb-10 pt-4">
+                <div className="border-t border-linho/70 px-4 pb-6 pt-5">
                   {r.dreams.length ? <Mural dreams={r.dreams} onOpen={openDetail} onAdd={() => openAdd(r.cat?.id ?? null)} /> : (
                     <EmptyWall title="Esta categoria está vazia." text="Adicione um sonho e escolha esta categoria." action={<button className="btn btn-primary" onClick={() => openAdd(r.cat?.id ?? null)}><Plus size={18} /> Adicionar um sonho</button>} />
                   )}
