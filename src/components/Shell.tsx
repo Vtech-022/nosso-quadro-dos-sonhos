@@ -108,9 +108,6 @@ export function Shell() {
   const openAdd = useCallback((cat?: string | null) => setAdding({ cat: cat ?? null }), [])
   const openInvite = useCallback(() => setInvite(true), [])
   const ctx = useMemo(() => ({ query, openDetail, openAdd, openInvite }), [query, openDetail, openAdd, openInvite])
-  const ambientDream = b.dreams.find((d) => b.coverOf(d))
-  const ambientCover = ambientDream ? b.coverOf(ambientDream) : undefined
-  const ambient = b.url(ambientCover?.thumb_path ?? ambientCover?.path)
   const onBoard = loc.pathname === '/quadro'
 
   const coupleName = b.state?.couple?.name ?? ''
@@ -165,7 +162,7 @@ export function Shell() {
         </div>
       )}
 
-      <div className="ambient" aria-hidden="true">{ambient && <img src={ambient} alt="" />}</div>
+      <div className="ambient" aria-hidden="true" />
 
       <div className="mx-auto flex max-w-[1720px] gap-5 lg:p-5">
         {/* ---------- Menu lateral: recolhido mostra ícones, abre ao passar o mouse ---------- */}
