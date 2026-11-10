@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ImagePlus, Move, Plus, RefreshCw, Trash2, Undo2, Check } from 'lucide-react'
-import type { Dream, DreamFormat, DreamStatus } from '../lib/types'
+import { ImagePlus, Link2, Move, Plus, RefreshCw, Trash2, Undo2, Check, X } from 'lucide-react'
+import { cleanUrl } from '../lib/format'
+import type { Dream, DreamFormat, DreamLink, DreamStatus } from '../lib/types'
 import { suggestFormat } from '../lib/images'
 import { CategoryIcon, ICON_KEYS } from '../lib/icons'
 import { useBoard } from '../state/board'
@@ -89,6 +90,7 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [links, setLinks] = useState<DreamLink[]>([])
   const [categoryId, setCategoryId] = useState<string | null>(null)
   const [estimated, setEstimated] = useState<number | null>(null)
   const [saved, setSaved] = useState<number | null>(null)
@@ -112,6 +114,7 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
     if (!open) return
     setTitle(dream?.title ?? '')
     setDescription(dream?.description ?? '')
+    setLinks((dream?.links ?? []).map((l) => ({ ...l })))
     setCategoryId(dream ? dream.category_id : defaultCategoryId ?? null)
     setEstimated(dream?.estimated_value ?? null)
     setSaved(dream?.saved_value ?? null)
@@ -167,6 +170,14 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
   async function submit(ev: React.FormEvent) {
     ev.preventDefault()
     if (!title.trim()) { setError('Dê um nome ao sonho.'); return }
+    const cleaned: DreamLink[] = []
+    for (const l of links) {
+      if (!l.url.trim() && !l.label.trim()) continue
+      const url = cleanUrl(l.url)
+      if (!url) { setError(`O link “${l.url.trim() || l.label.trim()}” não parece um endereço válido. Cole o endereço completo, como https://loja.com/produto.`); return }
+      cleaned.push({ label: l.label.trim().slice(0, 60), url })
+    }
+    const linksChanged = JSON.stringify(cleaned) !== JSON.stringify(dream?.links ?? [])
     setBusy(true); setError(null)
     const payload = {
       title: title.trim(),
@@ -181,11 +192,11 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
     try {
       let id = dream?.id ?? ''
       if (!dream) {
-        id = await b.createDream(payload, file, focus)
+        id = await b.createDream(cleaned.length ? { ...payload, links: cleaned } : payload, file, focus)
         toast(status === 'achieved' ? 'Sonho conquistado e guardado no álbum.' : 'Sonho pendurado no quadro.')
       } else {
         const changed = (Object.keys(payload) as (keyof typeof payload)[]).some((k) => payload[k] !== (dream[k] ?? null) && !(k === 'description' && !payload[k] && !dream[k]))
-        if (changed) await b.updateDream(dream.id, payload)
+        if (changed || linksChanged) await b.updateDream(dream.id, linksChanged ? { ...payload, links: cleaned } : payload)
         if (file) await b.replaceCover(dream, file, focus)
         else if (removeCover && cover) await b.removeImage(cover)
         else if (cover && (cover.focus_x !== focus.x || cover.focus_y !== focus.y)) await b.setFocus(cover.id, focus)
@@ -301,6 +312,25 @@ export function DreamForm({ open, onClose, dream, defaultCategoryId, onSaved }: 
             <Field label="Descrição ou observações" htmlFor="d-desc">
               <textarea id="d-desc" className="field" value={description} onChange={(e) => setDescription(e.target.value)} maxLength={2000} placeholder="O que vocês imaginam para esse sonho?" />
             </Field>
+
+            <div>
+              <div className="mb-1.5 flex items-center justify-between">
+                <span className="label !mb-0">Links</span>
+                <span className="text-[12px] text-tinta-3">Loja, mapa, referência</span>
+              </div>
+              <div className="space-y-2">
+                {links.map((l, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <input className="field !h-10 w-[34%] min-w-0" placeholder="Nome (opcional)" aria-label={`Nome do link ${i + 1}`} maxLength={60} value={l.label} onChange={(e) => setLinks((p) => p.map((x, n) => n === i ? { ...x, label: e.target.value } : x))} />
+                    <input className="field !h-10 min-w-0 flex-1" type="url" inputMode="url" placeholder="https://" aria-label={`Endereço do link ${i + 1}`} maxLength={600} value={l.url} onChange={(e) => setLinks((p) => p.map((x, n) => n === i ? { ...x, url: e.target.value } : x))} />
+                    <button type="button" className="icon-btn icon-btn-sm shrink-0" aria-label={`Remover link ${i + 1}`} onClick={() => setLinks((p) => p.filter((_, n) => n !== i))}><X size={15} /></button>
+                  </div>
+                ))}
+                {links.length < 8 && (
+                  <button type="button" className="btn btn-soft btn-sm" onClick={() => setLinks((p) => [...p, { label: '', url: '' }])}><Link2 size={15} /> Adicionar link</button>
+                )}
+              </div>
+            </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Valor estimado" htmlFor="d-est" hint="Opcional. Sem valor, o sonho fica fora dos cálculos financeiros.">

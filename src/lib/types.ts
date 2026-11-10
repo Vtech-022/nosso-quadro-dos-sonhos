@@ -50,6 +50,8 @@ export interface DreamImage {
   created_at: string
 }
 
+export interface DreamLink { label: string; url: string }
+
 export interface Dream {
   id: string
   couple_id: string
@@ -68,6 +70,8 @@ export interface Dream {
   achieved_at: string | null
   achieved_by: string | null
   achievement_note: string | null
+  /** Pode faltar em quadros antigos; trate como lista vazia. */
+  links?: DreamLink[]
   images: DreamImage[]
 }
 
@@ -123,4 +127,5 @@ export interface DreamInput {
   saved_value: number | null
   target_date: string | null
   format: DreamFormat
+  links?: DreamLink[]
 }

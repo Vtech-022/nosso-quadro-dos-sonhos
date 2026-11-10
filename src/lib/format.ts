@@ -66,3 +66,24 @@ export function hash01(s: string): number {
 export function uuid(): string {
   return crypto.randomUUID()
 }
+
+/** Aceita só endereços http(s); completa "https://" quando falta. Devolve null se não servir. */
+export function cleanUrl(raw: string): string | null {
+  const t = raw.trim()
+  if (!t) return null
+  const withScheme = /^[a-z][a-z0-9+.-]*:/i.test(t) ? t : `https://${t}`
+  try {
+    const u = new URL(withScheme)
+    if (u.protocol !== 'http:' && u.protocol !== 'https:') return null
+    if (!u.hostname.includes('.')) return null
+    return u.toString()
+  } catch { return null }
+}
+
+export function linkHost(url: string): string {
+  try { return new URL(url).hostname.replace(/^www\./, '') } catch { return url }
+}
+
+export function isMapLink(url: string): boolean {
+  return /(^|\.)(maps\.app\.goo\.gl|goo\.gl|waze\.com|maps\.apple\.com|openstreetmap\.org)$/.test(linkHost(url)) || /google\.[a-z.]+\/maps|maps\.google\./.test(url)
+}

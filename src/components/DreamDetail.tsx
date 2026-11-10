@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { CalendarDays, ImagePlus, Pencil, RotateCcw, Send, Sparkles, Trash2, Wallet, X } from 'lucide-react'
+import { CalendarDays, ExternalLink, ImagePlus, MapPin, Pencil, RotateCcw, Send, Sparkles, Trash2, Wallet, X } from 'lucide-react'
 import { CategoryIcon } from '../lib/icons'
-import { formatDate, formatDateOnly, money, percent, relativeTime } from '../lib/format'
+import { formatDate, formatDateOnly, isMapLink, linkHost, money, percent, relativeTime } from '../lib/format'
 import { useBoard } from '../state/board'
 import { useToast } from '../state/toast'
 import { AchieveDialog } from './Achievement'
@@ -111,6 +111,19 @@ export function DreamDetail({ dreamId, onClose }: { dreamId: string | null; onCl
 
             <h2 className="mt-4 text-[26px] sm:text-[34px] leading-[1]">{dream.title}</h2>
             {dream.description && <p className="mt-4 whitespace-pre-line text-[16px] leading-relaxed text-tinta-2">{dream.description}</p>}
+
+            {(dream.links?.length ?? 0) > 0 && (
+              <ul className="mt-5 flex flex-wrap gap-2" aria-label="Links">
+                {dream.links!.map((l, i) => (
+                  <li key={i} className="min-w-0 max-w-full">
+                    <a href={l.url} target="_blank" rel="noopener noreferrer" title={l.url} className="flex max-w-full items-center gap-2 rounded-[10px] border border-linho bg-tinta/[.04] px-3 py-2 text-[13.5px] font-semibold transition hover:border-pinheiro hover:text-pinheiro">
+                      {isMapLink(l.url) ? <MapPin size={15} className="shrink-0 text-pinheiro" /> : <ExternalLink size={15} className="shrink-0 text-pinheiro" />}
+                      <span className="truncate">{l.label || linkHost(l.url)}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
 
             {dream.target_date && !achieved && (
               <p className="mt-5 flex items-center gap-2 text-[14.5px] text-tinta-2"><CalendarDays size={17} className="text-pinheiro" /> Queremos viver isso em <strong className="font-semibold text-tinta">{formatDateOnly(dream.target_date)}</strong></p>
