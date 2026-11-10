@@ -12,3 +12,14 @@ export const SCENES: Scene[] = [
 ]
 
 export const sceneUrl = (s: Scene, w = 2000) => u(s.id, w)
+
+/** Imagem do destaque da tela inicial. */
+export const HERO_PHOTO = u('1506905925346-21bda4d32df4', 1800)
+
+/** Referências visuais para quando ainda não há sonhos. Não são gravadas. */
+export const EXAMPLES = [
+  { title: 'Conhecer o mundo', tag: 'Viagens', src: u('1502602898657-3e91760cbb34', 700) },
+  { title: 'Nossa casa', tag: 'Casa própria', src: u('1512917774080-9991f1c4c750', 700) },
+  { title: 'Pé na estrada', tag: 'Experiências', src: u('1500530855697-b586d89ba3ee', 700) },
+  { title: 'Um refúgio na natureza', tag: 'Estilo de vida', src: u('1501785888041-af3ef285b470', 700) },
+]

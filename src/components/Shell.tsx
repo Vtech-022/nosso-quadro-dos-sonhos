@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
-  Activity as ActivityIcon, Bell, CalendarClock, Home, LayoutGrid, LogOut, MoreHorizontal, Plus, Search, Settings, Trophy, Wallet, X,
+  Activity as ActivityIcon, Bell, CalendarClock, Home, LayoutGrid, LogOut, Menu, Moon, MoreHorizontal, Plus, Search, Settings, Sun, Trophy, Wallet, X,
 } from 'lucide-react'
 import { describeUpdate, useBoard } from '../state/board'
 import { useAuth } from '../state/auth'
@@ -10,7 +10,8 @@ import { CelebrationDialog } from './Achievement'
 import { DreamDetail } from './DreamDetail'
 import { DreamForm } from './DreamForm'
 import { InviteDialog } from './InviteDialog'
-import { Avatar, AvatarPair, CloseButton, Logo, LogoMark, Modal } from './ui'
+import { Avatar, CloseButton, LogoMark, Modal } from './ui'
+import { usePrefs } from '../state/prefs'
 import { IS_DEMO } from '../lib/supabase'
 import { demoReset } from '../lib/demo/client'
 
@@ -93,6 +94,15 @@ export function Shell() {
   const [notif, setNotif] = useState(false)
   const [more, setMore] = useState(false)
   const [query, setQuery] = useState('')
+  const [drawer, setDrawer] = useState(false)
+  const { set: setPrefs } = usePrefs()
+  const toggleTheme = () => {
+    const root = document.documentElement
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark'
+    root.classList.add('theme-anim')
+    window.setTimeout(() => root.classList.remove('theme-anim'), 450)
+    setPrefs({ theme: next })
+  }
 
   const openDetail = useCallback((id: string) => { void b.ensureUrls(b.dreams.find((d) => d.id === id)?.images.flatMap((i) => [i.path, i.thumb_path]) ?? []); setDetail(id) }, [b])
   const openAdd = useCallback((cat?: string | null) => setAdding({ cat: cat ?? null }), [])
@@ -104,6 +114,39 @@ export function Shell() {
   const onBoard = loc.pathname === '/quadro'
 
   const coupleName = b.state?.couple?.name ?? ''
+
+  const achievedCount = b.dreams.filter((d) => d.status === 'achieved').length
+  const sideContent = (mobile: boolean) => (
+    <>
+      <NavLink to="/quadro" onClick={() => setDrawer(false)} className="flex items-center gap-3 px-1 pb-5 pt-1" aria-label="Dreamspace, início">
+        <LogoMark size={40} />
+        <span className="side-label leading-none">
+          <span className="block font-display text-[18.5px] font-bold tracking-[-0.03em]">Dreamspace</span>
+          <span className="mt-1 block text-[11.5px] font-medium text-tinta-3">Espaço dos sonhos</span>
+        </span>
+        {mobile && <span className="ml-auto"><CloseButton onClick={() => setDrawer(false)} /></span>}
+      </NavLink>
+      <nav className="flex flex-col gap-1" aria-label="Principal">
+        {NAV.map((n) => (
+          <NavLink key={n.to} to={n.to} title={n.label} onClick={() => setDrawer(false)} className={({ isActive }) => `side-link ${isActive ? 'active' : ''}`}>
+            <n.icon size={20} strokeWidth={1.8} /> <span className="side-label">{n.label}</span>
+            {n.to === '/conquistas' && achievedCount > 0 && <span className="side-label ml-auto rounded-full bg-latao px-2 py-0.5 text-[11.5px] font-bold text-[#141a2c]">{achievedCount}</span>}
+          </NavLink>
+        ))}
+      </nav>
+      <div className="mt-auto flex flex-col gap-1">
+        <NavLink to="/configuracoes" title="Configurações" onClick={() => setDrawer(false)} className={({ isActive }) => `side-link ${isActive ? 'active' : ''}`}><Settings size={20} strokeWidth={1.8} /> <span className="side-label">Configurações</span></NavLink>
+        <button title="Sair" className="side-link" onClick={() => void signOut()}><LogOut size={20} strokeWidth={1.8} /> <span className="side-label">Sair</span></button>
+        <div className="mt-2 flex items-center gap-3 rounded-[16px] border-t border-linho/60 px-1 pt-3">
+          <Avatar userId={b.meId} name={b.me?.display_name} path={b.me?.avatar_path} size={40} />
+          <div className="side-label min-w-0">
+            <div className="max-w-[160px] truncate text-[14px] font-semibold leading-tight">{b.me?.display_name ?? 'Você'}</div>
+            <div className="mt-0.5 max-w-[160px] truncate text-[12px] text-tinta-3">{coupleName || (b.members.length < 2 ? 'Aguardando seu par' : 'Nosso espaço')}</div>
+          </div>
+        </div>
+      </div>
+    </>
+  )
 
   return (
     <Ctx.Provider value={ctx}>
@@ -125,51 +168,35 @@ export function Shell() {
       <div className="ambient" aria-hidden="true">{ambient && <img src={ambient} alt="" />}</div>
 
       <div className="mx-auto flex max-w-[1720px] gap-5 lg:p-5">
-        {/* ---------- Barra lateral ---------- */}
-        <aside className="glass sticky top-5 hidden h-[calc(100dvh-40px)] w-[250px] shrink-0 flex-col rounded-[26px] p-3.5 lg:flex">
-          <NavLink to="/quadro" className="px-2 pb-5 pt-2.5" aria-label="Dreamspace, início"><Logo /></NavLink>
-          <p className="eyebrow px-3 pb-2">Menu</p>
-          <nav className="flex flex-col gap-1" aria-label="Principal">
-            {NAV.map((n) => (
-              <NavLink key={n.to} to={n.to} className={({ isActive }) => `side-link ${isActive ? 'active' : ''}`}>
-                <n.icon size={19} strokeWidth={1.8} /> {n.label}
-                {n.to === '/conquistas' && b.dreams.some((d) => d.status === 'achieved') && (
-                  <span className="ml-auto rounded-full bg-latao px-2 py-0.5 text-[11.5px] font-bold text-[#141a2c]">{b.dreams.filter((d) => d.status === 'achieved').length}</span>
-                )}
-              </NavLink>
-            ))}
-          </nav>
-
-          <div className="mt-auto space-y-1">
-            <NavLink to="/configuracoes" className={({ isActive }) => `side-link ${isActive ? 'active' : ''}`}><Settings size={19} strokeWidth={1.8} /> Configurações</NavLink>
-            <button className="side-link w-full" onClick={() => void signOut()}><LogOut size={19} strokeWidth={1.8} /> Sair</button>
-            <div className="mt-2 flex items-center gap-3 rounded-[16px] border border-linho/60 bg-tinta/[.04] p-3">
-              <AvatarPair size={34} />
-              <div className="min-w-0">
-                <div className="truncate text-[14px] font-semibold leading-tight">{coupleName || 'Nosso espaço'}</div>
-                <div className="mt-0.5 truncate text-[12px] text-tinta-3">{b.members.length < 2 ? 'Aguardando seu par' : `${b.dreams.length} ${b.dreams.length === 1 ? 'sonho' : 'sonhos'} no espaço`}</div>
-              </div>
-            </div>
-          </div>
+        {/* ---------- Menu lateral: recolhido mostra ícones, abre ao passar o mouse ---------- */}
+        <aside className="side hidden lg:block" aria-label="Menu">
+          <div className="side-panel glass">{sideContent(false)}</div>
         </aside>
 
         <div className="min-w-0 flex-1">
-          {/* ---------- Barra superior ---------- */}
-          <header className="sticky top-0 z-30 px-3 pt-3 lg:top-5 lg:px-0 lg:pt-0">
+          {/* ---------- Barra superior (rola junto com a página) ---------- */}
+          <header className="px-3 pt-3 lg:px-0 lg:pt-0">
             <div className="glass flex h-[60px] items-center gap-2 rounded-[20px] px-3 sm:gap-3 sm:px-4">
-              <NavLink to="/quadro" className="lg:hidden" aria-label="Dreamspace, início"><LogoMark size={32} /></NavLink>
-              <label className={`relative min-w-0 flex-1 lg:max-w-[420px] ${onBoard ? '' : 'invisible'}`}>
+              <button className="icon-btn lg:hidden" onClick={() => setDrawer(true)} aria-label="Abrir menu"><Menu size={21} strokeWidth={1.8} /></button>
+              <label className={`relative min-w-0 flex-1 lg:max-w-[440px] ${onBoard ? '' : 'invisible'}`}>
                 <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-tinta-3" />
-                <input className="h-10 w-full rounded-[11px] border border-linho/70 bg-tinta/[.05] pl-10 pr-9 text-[14.5px] placeholder:text-tinta-3 focus:border-tinta-3 focus:outline-none" placeholder="Buscar um sonho" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Buscar um sonho" />
+                <input className="h-10 w-full rounded-[11px] border border-linho/70 bg-tinta/[.04] pl-10 pr-9 text-[14.5px] placeholder:text-tinta-3 focus:border-pinheiro focus:outline-none" placeholder="Buscar um sonho" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Buscar um sonho" />
                 {query && <button type="button" className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full text-tinta-3 hover:text-tinta" onClick={() => setQuery('')} aria-label="Limpar busca"><X size={15} /></button>}
               </label>
-              <div className="ml-auto flex items-center gap-1.5">
-                <button className="btn btn-icon btn-ghost relative" onClick={() => setNotif(true)} aria-label={b.unread ? `Notificações, ${b.unread} não lidas` : 'Notificações'}>
-                  <Bell size={20} strokeWidth={1.7} />
-                  {b.unread > 0 && <span className="absolute right-1 top-1 grid h-[17px] min-w-[17px] place-items-center rounded-full bg-latao px-1 text-[10.5px] font-bold text-[#141a2c]">{b.unread > 9 ? '9+' : b.unread}</span>}
+              <div className="ml-auto flex items-center gap-1">
+                <button className="btn btn-primary btn-sm mr-2 hidden md:inline-flex" onClick={() => openAdd()}><Plus size={16} /> Novo sonho</button>
+                <button className="icon-btn icon-btn-sm" onClick={toggleTheme} data-tip="Alternar modo claro e escuro" aria-label="Alternar modo claro e escuro">
+                  <Sun size={16} strokeWidth={1.8} className="hidden [[data-theme=dark]_&]:block" />
+                  <Moon size={16} strokeWidth={1.8} className="[[data-theme=dark]_&]:hidden" />
                 </button>
-                <NavLink to="/configuracoes" className="btn btn-icon btn-ghost lg:hidden" aria-label="Configurações"><Settings size={20} strokeWidth={1.7} /></NavLink>
-                <button className="btn btn-primary ml-1 hidden sm:inline-flex" onClick={() => openAdd()}><Plus size={18} /> Novo sonho</button>
+                <button className="icon-btn" onClick={() => setNotif(true)} data-tip="Notificações" aria-label={b.unread ? `Notificações, ${b.unread} não lidas` : 'Notificações'}>
+                  <Bell size={20} strokeWidth={1.7} />
+                  {b.unread > 0 && <span className="absolute right-0.5 top-0.5 grid h-[17px] min-w-[17px] place-items-center rounded-full bg-latao px-1 text-[10.5px] font-bold text-[#141a2c]">{b.unread > 9 ? '9+' : b.unread}</span>}
+                </button>
+                <NavLink to="/configuracoes" className="ml-1.5 flex items-center gap-2.5 rounded-full py-1 pl-1 pr-1 transition hover:bg-tinta/[.06] sm:pr-3" aria-label="Seu perfil e configurações">
+                  <Avatar userId={b.meId} name={b.me?.display_name} path={b.me?.avatar_path} size={34} />
+                  <span className="hidden max-w-[140px] truncate text-[14px] font-semibold sm:block">{b.me?.display_name ?? 'Você'}</span>
+                </NavLink>
               </div>
             </div>
           </header>
@@ -180,13 +207,21 @@ export function Shell() {
         </div>
       </div>
 
+      {/* ---------- Menu no celular: abre e fecha por toque ---------- */}
+      {drawer && (
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+          <button className="absolute inset-0 bg-black/55 backdrop-blur-[2px]" onClick={() => setDrawer(false)} aria-label="Fechar menu" />
+          <div className="side-panel open glass absolute !inset-y-3 !left-3 animate-entrar">{sideContent(true)}</div>
+        </div>
+      )}
+
       {/* ---------- Navegação do celular ---------- */}
       <nav className="fixed inset-x-0 bottom-0 z-30 glass !rounded-none border-x-0 border-b-0 lg:hidden safe-bottom" aria-label="Principal">
         <div className="mx-auto grid max-w-[560px] grid-cols-5 items-end px-2 pb-1.5 pt-1.5">
           <MobTab to="/quadro" icon={Home} label="Início" />
           <MobTab to="/em-planejamento" icon={CalendarClock} label="Planejando" />
           <div className="flex justify-center">
-            <button className="-mt-6 grid h-14 w-14 place-items-center rounded-full bg-tinta text-parede shadow-erguido transition active:scale-95" onClick={() => openAdd()} aria-label="Adicionar um sonho">
+            <button className="-mt-6 grid h-14 w-14 place-items-center rounded-full bg-pinheiro text-[rgb(var(--on-azul))] shadow-erguido transition active:scale-95" onClick={() => openAdd()} aria-label="Adicionar um sonho">
               <Plus size={26} />
             </button>
           </div>

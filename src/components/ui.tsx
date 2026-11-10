@@ -8,22 +8,15 @@ import { useBoard } from '../state/board'
 
 /* ---------------- Marca ---------------- */
 export function LogoMark({ size = 34 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
-      <rect x="2" y="2" width="60" height="60" rx="16" fill="#18181B" stroke="rgba(255,255,255,.2)" strokeWidth="2" />
-      <path d="M40.5 12.5a20.5 20.5 0 1 0 11 36.2A17 17 0 0 1 40.5 12.5Z" fill="#F4B400"/>
-      <path d="M45 22.5c.7 3.7 1.8 4.8 5.5 5.5-3.7.7-4.8 1.8-5.5 5.5-.7-3.7-1.8-4.8-5.5-5.5 3.7-.7 4.8-1.8 5.5-5.5Z" fill="#fff"/>
-      <circle cx="52.5" cy="19" r="1.6" fill="#fff"/>
-    </svg>
-  )
+  return <img src={`${import.meta.env.BASE_URL}logo.png`} width={size} height={size} alt="" className="shrink-0 select-none" style={{ width: size, height: size, borderRadius: size * 0.24 }} draggable={false} />
 }
 
 export function Logo({ compact = false, light = false }: { compact?: boolean; light?: boolean }) {
   return (
     <div className="flex items-center gap-3">
-      <LogoMark />
+      <LogoMark size={40} />
       {!compact && (
-        <div className="leading-none">
+        <div className="side-label-host leading-none">
           <div className={`font-display text-[18.5px] font-bold tracking-[-0.03em] ${light ? 'text-white' : 'text-tinta'}`}>Dreamspace</div>
           <div className={`mt-1 text-[11.5px] font-medium ${light ? 'text-white/65' : 'text-tinta-3'}`}>Espaço dos sonhos</div>
         </div>

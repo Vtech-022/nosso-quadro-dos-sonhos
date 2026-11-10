@@ -1,13 +1,16 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, CalendarClock, PiggyBank, Plus, Trophy, UserPlus } from 'lucide-react'
+import { ArrowRight, CalendarClock, CalendarPlus, Flag, Plus, Sparkles, Star, Target, Trophy, UserPlus, Wallet } from 'lucide-react'
 import { CategoryIcon } from '../lib/icons'
 import { sortDreams } from '../lib/dreams'
-import { formatMonthYear, money, percent } from '../lib/format'
+import { formatMonthYear, percent } from '../lib/format'
 import { useBoard } from '../state/board'
 import { usePrefs, type SortMode } from '../state/prefs'
 import { EmptyWall, Mural } from '../components/Mural'
 import { useShell } from '../components/Shell'
+import { EXAMPLES, HERO_PHOTO } from '../lib/photos'
+import { describeUpdate } from '../state/board'
+import { relativeTime } from '../lib/format'
 import { Spinner } from '../components/ui'
 
 export const DEFAULT_MOTTO = 'Grandes conquistas começam com pequenos sonhos.'
@@ -26,12 +29,10 @@ export function PageHead({ title, sub, right }: { title: string; sub?: string; r
 
 function Stat({ icon: Icon, n, label, tone = 'azul' }: { icon: typeof Trophy; n: string | number; label: string; tone?: 'azul' | 'ouro' }) {
   return (
-    <div className="panel flex items-center gap-4 p-4 sm:p-5">
-      <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-[14px] ${tone === 'ouro' ? 'bg-latao/15 text-latao' : 'bg-tinta/[.07] text-tinta'}`}><Icon size={22} strokeWidth={1.8} /></span>
-      <div className="min-w-0">
-        <div className="truncate font-display text-[24px] leading-none tabular-nums sm:text-[27px]">{n}</div>
-        <div className="mt-1.5 truncate text-[13px] text-tinta-2">{label}</div>
-      </div>
+    <div className="panel flex flex-col items-center gap-2 px-3 py-5 text-center">
+      <span className={`grid h-10 w-10 place-items-center rounded-[12px] ${tone === 'ouro' ? 'bg-latao/15 text-latao' : 'bg-pinheiro/15 text-pinheiro'}`}><Icon size={20} strokeWidth={1.8} /></span>
+      <div className="text-[13px] text-tinta-2">{label}</div>
+      <div className="font-display text-[26px] font-semibold leading-none tabular-nums">{n}</div>
     </div>
   )
 }
@@ -55,58 +56,110 @@ export function QuadroPage() {
   }, [b.dreams, status, cat, prefs.sort, query])
 
   const plan = b.dreams.filter((d) => d.status === 'planning')
-  const feat = sortDreams(plan.filter((d) => b.coverOf(d)), 'target')[0] ?? b.dreams.find((d) => b.coverOf(d)) ?? plan[0] ?? b.dreams[0]
-  const featCover = feat ? b.coverOf(feat) : undefined
-  const featSrc = b.url(featCover?.path ?? featCover?.thumb_path) ?? b.url(featCover?.thumb_path)
-  const featPct = feat ? percent(feat.saved_value, feat.estimated_value) : null
-  const featCat = feat ? b.category(feat.category_id) : undefined
-  const savedTotal = plan.reduce((t, d) => t + (d.saved_value ?? 0), 0)
-  const hour = new Date().getHours()
-  const hello = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite'
-
+  const today = new Date().toISOString().slice(0, 10)
+  const upcoming = sortDreams(plan.filter((d) => d.target_date && d.target_date >= today), 'target')
+  const inProgress = sortDreams(plan, 'target').slice(0, 4)
+  const noDate = plan.filter((d) => !d.target_date)
+  const noValue = plan.filter((d) => d.estimated_value == null)
+  const steps: { key: string; icon: typeof Trophy; title: string; sub: string; go: () => void }[] = [
+    ...upcoming.slice(0, 3).map((d) => ({ key: `t${d.id}`, icon: CalendarClock, title: d.title, sub: `Meta para ${formatMonthYear(d.target_date!)}`, go: () => openDetail(d.id) })),
+    ...(noDate[0] ? [{ key: 'nd', icon: CalendarPlus, title: `Definir uma data para “${noDate[0].title}”`, sub: noDate.length > 1 ? `E mais ${noDate.length - 1} sem data` : 'Ainda sem data desejada', go: () => openDetail(noDate[0].id) }] : []),
+    ...(noValue[0] ? [{ key: 'nv', icon: Wallet, title: `Estimar o valor de “${noValue[0].title}”`, sub: 'Para entrar no planejamento financeiro', go: () => openDetail(noValue[0].id) }] : []),
+    ...(alone && !invited ? [{ key: 'inv', icon: UserPlus, title: 'Convidar seu par', sub: 'Para os dois editarem o mesmo espaço', go: openInvite }] : []),
+  ].slice(0, 5)
+  const recent = b.activities.slice(0, 3)
+  const firstName = (b.me?.display_name ?? '').trim().split(/\s+/)[0]
   const usedCats = b.categories.filter((c) => b.dreams.some((d) => d.category_id === c.id))
   const motto = b.state?.couple?.motto || DEFAULT_MOTTO
+  const scrollToDreams = () => document.getElementById('meus-sonhos')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
   return (
     <>
-      <section className="hero">
-        {featSrc && <img src={featSrc} alt="" style={{ objectPosition: `${featCover?.focus_x ?? 50}% ${featCover?.focus_y ?? 50}%` }} />}
-        <div className="flex w-full max-w-[640px] flex-col justify-end p-6 text-white sm:p-9 lg:p-11">
-          <p className="text-[14px] font-medium text-white/75">{hello}{b.me?.display_name ? `, ${b.me.display_name}` : ''}</p>
-          {feat ? (
-            <>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="pill pill-gold">{feat.status === 'achieved' ? 'Conquistado' : 'Próximo sonho'}</span>
-                {featCat && <span className="pill"><CategoryIcon name={featCat.icon} size={13} /> {featCat.name}</span>}
-                {feat.target_date && feat.status !== 'achieved' && <span className="pill"><CalendarClock size={13} /> {formatMonthYear(feat.target_date)}</span>}
-              </div>
-              <h1 className="mt-4 text-[clamp(1.9rem,4vw,3.2rem)] font-semibold leading-[1.03] tracking-[-0.03em]">{feat.title}</h1>
-              <p className="mt-3 line-clamp-2 max-w-[520px] text-[16px] leading-relaxed text-white/80">{feat.description || motto}</p>
-              {prefs.showValues && featPct !== null && feat.status !== 'achieved' && (
-                <div className="mt-5 max-w-[420px]">
-                  <div className="flex justify-between text-[13px] font-medium text-white/85"><span>{money(feat.saved_value ?? 0)} de {money(feat.estimated_value ?? 0)}</span><span>{Math.round(featPct)}%</span></div>
-                  <div className="meter mt-2 !h-1.5 !bg-white/20"><i className="!bg-latao" style={{ width: `${featPct}%` }} /></div>
-                </div>
-              )}
-              <div className="mt-7 flex flex-wrap gap-3">
-                <button className="btn btn-white" onClick={() => openDetail(feat.id)}>Abrir sonho <ArrowRight size={17} /></button>
-                <button className="btn btn-glass" onClick={() => openAdd()}><Plus size={17} /> Novo sonho</button>
-              </div>
-            </>
-          ) : (
-            <>
-              <h1 className="mt-4 text-[clamp(1.9rem,4vw,3.2rem)] font-semibold leading-[1.03] tracking-[-0.03em]">O espaço de vocês começa aqui.</h1>
-              <p className="mt-3 max-w-[520px] text-[16px] leading-relaxed text-white/80">{motto}</p>
-              <div className="mt-7"><button className="btn btn-white" onClick={() => openAdd()}><Plus size={17} /> Adicionar o primeiro sonho</button></div>
-            </>
-          )}
+      {/* A. Boas-vindas */}
+      <header className="border-l-[3px] border-pinheiro pl-5">
+        <h1 className="text-[clamp(1.7rem,3vw,2.4rem)] leading-[1.1] tracking-[-0.03em]">Olá{firstName ? `, ${firstName}` : ''}! Que bom ter você por aqui.</h1>
+        <p className="mt-2.5 max-w-[640px] text-[15.5px] leading-relaxed text-tinta-2">Cada sonho começa com uma ideia. Organize seus objetivos e transforme seus planos em realidade.</p>
+      </header>
+
+      {/* B. Destaque */}
+      <section className="hero mt-7">
+        <img src={HERO_PHOTO} alt="" />
+        <div className="flex w-full max-w-[600px] flex-col justify-end p-6 text-white sm:p-9">
+          <p className="text-[13px] font-medium text-white/75">{motto}</p>
+          <p className="mt-2 font-display text-[clamp(1.9rem,3.6vw,2.9rem)] font-semibold leading-[1.05] tracking-[-0.03em] [text-wrap:balance]">Sonhe. Planeje. Conquiste.</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button className="btn btn-white" onClick={() => openAdd()}><Plus size={17} /> Novo sonho</button>
+            {b.dreams.length > 0 && <button className="btn btn-glass" onClick={scrollToDreams}>Ver meus sonhos <ArrowRight size={17} /></button>}
+          </div>
         </div>
       </section>
 
-      <section className="mt-5 grid gap-4 sm:grid-cols-3" aria-label="Resumo">
-        <Stat icon={CalendarClock} n={planning} label="em planejamento" />
-        <Stat icon={Trophy} n={achieved} label={achieved === 1 ? 'conquistado' : 'conquistados'} tone="ouro" />
-        <Stat icon={PiggyBank} n={prefs.showValues ? money(savedTotal) : '•••'} label="já guardado para os sonhos" />
+      {/* C. Resumo */}
+      <section className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4" aria-label="Resumo dos objetivos">
+        <Stat icon={Star} n={b.dreams.length} label="Sonhos cadastrados" />
+        <Stat icon={Target} n={planning} label="Em andamento" />
+        <Stat icon={Trophy} n={achieved} label="Conquistas" tone="ouro" />
+        <Stat icon={Flag} n={upcoming.length} label="Próximas metas" />
+      </section>
+
+      {/* D + E. Em andamento e próximos passos */}
+      <section className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start">
+        <div className="panel p-5 sm:p-6">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <h2 className="flex items-center gap-2.5 text-[19px] leading-none"><Sparkles size={18} className="text-pinheiro" /> {inProgress.length ? 'Seus sonhos em andamento' : 'Ideias para começar'}</h2>
+            {b.dreams.length > 0 && <button className="flex items-center gap-1 text-[13.5px] font-semibold text-pinheiro hover:underline" onClick={scrollToDreams}>Ver todos <ArrowRight size={14} /></button>}
+          </div>
+          <div className="grid grid-cols-2 gap-3.5 md:grid-cols-4">
+            {inProgress.length > 0 ? inProgress.map((d) => {
+              const c = b.coverOf(d); const src = b.url(c?.thumb_path ?? c?.path); const k = b.category(d.category_id)
+              const pc = percent(d.saved_value, d.estimated_value)
+              return (
+                <button key={d.id} className="dream-card" onClick={() => openDetail(d.id)}>
+                  <div className="relative aspect-[4/3] bg-linho">
+                    {src ? <img src={src} alt="" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${c?.focus_x ?? 50}% ${c?.focus_y ?? 50}%` }} /> : <div className="print-empty absolute inset-0"><CategoryIcon name={k?.icon ?? 'star'} size={34} /></div>}
+                  </div>
+                  <div className="p-3">
+                    <div className="flex items-center gap-1.5 text-[13.5px] font-semibold"><CategoryIcon name={k?.icon ?? 'star'} size={14} /><span className="truncate">{d.title}</span></div>
+                    <div className="mt-2.5 flex items-center gap-2">
+                      <div className="meter flex-1"><i style={{ width: `${pc ?? 0}%` }} /></div>
+                      <span className="text-[12px] font-semibold tabular-nums text-tinta-2">{pc === null ? '—' : `${Math.round(pc)}%`}</span>
+                    </div>
+                  </div>
+                </button>
+              )
+            }) : EXAMPLES.map((x) => (
+              <button key={x.title} className="dream-card" onClick={() => openAdd()}>
+                <div className="relative aspect-[4/3] bg-linho"><img src={x.src} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" /><span className="pill absolute left-2 top-2">Exemplo</span></div>
+                <div className="p-3"><div className="truncate text-[13.5px] font-semibold">{x.title}</div><div className="mt-1 text-[12px] text-tinta-3">{x.tag}</div></div>
+              </button>
+            ))}
+          </div>
+          {inProgress.length === 0 && <p className="mt-4 text-[13.5px] text-tinta-3">São só referências visuais. Toque em uma delas para cadastrar o seu próprio sonho.</p>}
+        </div>
+
+        <div className="panel p-5 sm:p-6">
+          <h2 className="mb-2 flex items-center gap-2.5 text-[19px] leading-none"><Flag size={18} className="text-pinheiro" /> Próximos passos</h2>
+          {steps.length === 0 && recent.length === 0 ? (
+            <p className="mt-4 text-[14.5px] leading-relaxed text-tinta-2">Quando houver sonhos com data ou valor, os próximos passos aparecem aqui.</p>
+          ) : (
+            <ul className="divide-y divide-linho/60">
+              {steps.map((st) => (
+                <li key={st.key}>
+                  <button className="flex w-full items-center gap-3 py-3 text-left transition hover:opacity-80" onClick={st.go}>
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-pinheiro/12 text-pinheiro"><st.icon size={17} strokeWidth={1.8} /></span>
+                    <span className="min-w-0 flex-1"><span className="block truncate text-[14px] font-semibold">{st.title}</span><span className="mt-0.5 block truncate text-[12.5px] text-tinta-3">{st.sub}</span></span>
+                  </button>
+                </li>
+              ))}
+              {steps.length < 3 && recent.map((a) => (
+                <li key={a.id} className="flex items-center gap-3 py-3">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-tinta/[.06] text-tinta-2"><Sparkles size={16} strokeWidth={1.8} /></span>
+                  <span className="min-w-0 flex-1"><span className="block truncate text-[14px]">{describeUpdate(a, a.actor_id === b.meId ? 'Você' : b.memberOf(a.actor_id)?.display_name ?? 'Seu par')}</span><span className="mt-0.5 block text-[12.5px] text-tinta-3">{relativeTime(a.created_at)}</span></span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </section>
 
       {alone && (
@@ -119,9 +172,9 @@ export function QuadroPage() {
       )}
 
       {b.dreams.length > 0 && (
-        <div className="mt-10 space-y-4">
+        <div id="meus-sonhos" className="mt-10 scroll-mt-6 space-y-4">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 className="text-[22px] leading-none sm:text-[24px]">Todos os sonhos</h2>
+            <h2 className="text-[22px] leading-none sm:text-[24px]">Meus sonhos</h2>
             <span className="text-[13.5px] text-tinta-3">{visible.length} de {b.dreams.length}</span>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -155,13 +208,7 @@ export function QuadroPage() {
       <div className="mt-8 sm:mt-10">
         {b.loading ? (
           <div className="grid place-items-center py-24 text-tinta-2"><Spinner size={28} /></div>
-        ) : b.dreams.length === 0 ? (
-          <EmptyWall
-            title="Nenhum sonho por aqui ainda."
-            text="Comece com uma foto de um sonho: a casa, a viagem, o carro, a data do casamento. Cada imagem que vocês adicionarem vira parte do espaço."
-            action={<button className="btn btn-primary" onClick={() => openAdd()}><Plus size={18} /> Adicionar o primeiro sonho</button>}
-          />
-        ) : visible.length === 0 ? (
+        ) : b.dreams.length === 0 ? null : visible.length === 0 ? (
           <div className="py-16 text-center">
             <h2 className="text-[24px] leading-none">Nenhum sonho com esses filtros.</h2>
             <button className="btn btn-soft mt-6" onClick={() => { setStatus('all'); setCat(null) }}>Limpar filtros</button>{query && <p className="mt-3 text-[14px] text-tinta-3">A busca por “{query}” também está ativa.</p>}
